@@ -1,22 +1,23 @@
-const CACHE_NAME = 'veritas-v2';   // bump version to force re‑cache
+const CACHE_NAME = 'veritas-v4';
 const ASSETS = [
   '/',
   '/index.html',
   '/survey.html',
   '/results.html',
   '/methodology.html',
-  // '/about.html',         ← remove this if the file doesn't exist (it will break the install)
   '/js/data.js',
   '/js/glossary.js',
   '/js/engine.js',
   '/js/parties.js',
-  '/js/dossier.js',        // ← newly added
-  '/js/charts.js',         // ← if you use charts.js
+  '/js/dossier.js',
+  '/js/ideologies.js',
+  '/js/charts.js',
   '/assets/images/southa.jpg',
-  '/assets/images/southa.ico',   // favicon
+  '/assets/images/southa.ico',
+  '/assets/icons/icon-192.png',
+  '/assets/icons/icon-512.png',
   '/assets/videos/hero-intro.mp4',
-
-  // ── Audio files (encoded as in your playlist) ──
+  // Audio files (encoded)
   '/assets/audio/' + encodeURI("Asimbonanga (Mandela) - Johnny Clegg & Savuka [UJujyzA2Q1E].mp3"),
   '/assets/audio/' + encodeURI("Bob Marley & The Wailers - Redemption Song (Official Music Video) [yv5xonFSC4c].mp3"),
   '/assets/audio/' + encodeURI("Creedence Clearwater Revival - Fortunate Son [ZWijx_AgPiA].mp3"),
@@ -30,11 +31,8 @@ const ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // Use addAll with a catch so that one missing file doesn't break the whole install
       return Promise.allSettled(
-        ASSETS.map(url => cache.add(url).catch(err => {
-          console.warn('Failed to cache:', url, err);
-        }))
+        ASSETS.map(url => cache.add(url).catch(err => console.warn('Failed to cache:', url, err)))
       );
     })
   );
@@ -46,7 +44,6 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Optional: clean up old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
