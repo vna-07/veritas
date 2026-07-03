@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERITAS — Your Political Profile</title>
+    <meta name="description" content="VERITAS Results — Your compass, party matches, and ideological breakdown.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --ink: #1A1F2E; --parchment: #F0EBE1; --brass: #C9A84C; --brass-lt: #E8D48A;
+            --slate: #6B7280; --chalk: #FAFAF8; --rule: #D4C9B8; --red: #8B2020;
+            --green: #1A5C3A; --muted: #9CA3AF;
+            --font-display: 'Playfair Display', serif; --font-body: 'Inter', sans-serif; --font-mono: 'Space Mono', monospace;
+            --transition: 0.28s cubic-bezier(0.4,0,0.2,1);
+        }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{font-size:16px;scroll-behavior:smooth}
+        body{background:var(--parchment);color:var(--ink);font-family:var(--font-body);line-height:1.75;min-height:100vh}
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+        /* ── LOADING OVERLAY ── */
+        #results-loading{position:fixed;inset:0;z-index:9999;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 0.4s ease;}
+        .loading-title{font-family:var(--font-display);font-size:2.5rem;font-weight:900;letter-spacing:.3em;color:var(--brass)}
+        .loading-bar{width:200px;height:1px;background:rgba(201,168,76,0.18);overflow:hidden}
+        .loading-fill{height:100%;background:var(--brass);animation:loadFill 1.6s ease forwards}
+        .loading-text{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(201,168,76,0.45)}
+        @keyframes loadFill{from{width:0}to{width:100%}}
+
+        /* ── DISCLAIMER OVERLAY ── */
+        #disclaimer-overlay{position:fixed;inset:0;z-index:999;background:rgba(26,31,46,0.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:2rem}
+        .disclaimer-card{background:var(--chalk);border:1px solid var(--rule);max-width:560px;width:100%;max-height:70vh;padding:2rem 2rem 1.5rem;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+        .disclaimer-scroll{flex:1;overflow-y:auto;padding-right:0.5rem;margin-bottom:1rem;font-size:0.8rem;color:var(--slate);line-height:1.7;white-space:pre-line;}
+        .disclaimer-scroll::-webkit-scrollbar{width:4px}
+        .disclaimer-scroll::-webkit-scrollbar-track{background:var(--rule)}
+        .disclaimer-scroll::-webkit-scrollbar-thumb{background:var(--brass);border-radius:2px}
+        .disclaimer-btn{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;background:var(--brass);color:var(--ink);border:none;padding:0.75rem 2rem;cursor:pointer;transition:all var(--transition);align-self:center;opacity:0.4;pointer-events:none;}
+        .disclaimer-btn.active{opacity:1;pointer-events:all}
+        .disclaimer-btn.active:hover{background:var(--brass-lt);transform:translateY(-1px)}
+
+        /* ── MASTHEAD ── */
+        .masthead{background:var(--ink);color:var(--chalk);border-bottom:3px solid var(--brass)}
+        .masthead-inner{max-width:1160px;margin:0 auto;padding:28px 32px 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+        .masthead-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;color:var(--brass);text-transform:uppercase;display:block;margin-bottom:4px}
+        .masthead-title{font-family:var(--font-display);font-size:32px;font-weight:700;letter-spacing:-0.5px;line-height:1.1;color:var(--chalk);text-decoration:none}
+        .masthead-meta{text-align:right;font-family:var(--font-mono);font-size:10px;color:var(--muted);line-height:1.8}
+
+        /* ── HERO ── */
+        .hero-banner{background:var(--chalk);border-bottom:1px solid var(--rule)}
+        .hero-inner{max-width:1160px;margin:0 auto;padding:48px 32px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+        .hero-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--brass);margin-bottom:10px}
+        .hero-headline{font-family:var(--font-display);font-size:42px;font-weight:700;line-height:1.15;margin-bottom:16px}
+        .hero-headline em{font-style:italic;color:var(--brass)}
+        .hero-desc{font-size:15px;color:var(--slate);max-width:560px;line-height:1.7}
+        .hero-score-block{background:var(--ink);color:var(--chalk);padding:28px 36px;border-left:4px solid var(--brass);min-width:180px;text-align:center}
+        .hero-score-num{font-family:var(--font-display);font-size:56px;font-weight:700;color:var(--brass);line-height:1}
+        .hero-score-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+        .hero-score-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+        /* ── INSIGHT STRIP ── */
+        .insight-strip{background:var(--brass);padding:14px 32px}
+        .insight-inner{max-width:1160px;margin:0 auto;display:flex;gap:48px;align-items:center;flex-wrap:wrap}
+        .insight-item{display:flex;align-items:baseline;gap:8px}
+        .insight-num{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--ink)}
+        .insight-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(26,31,46,0.65)}
+
+        /* ── TIER VERDICT ── */
+        .tier-verdict-banner{background:var(--ink);color:var(--chalk);padding:1.5rem;text-align:center;margin:2rem auto;max-width:800px;border-left:4px solid var(--brass)}
+        .tier-verdict-banner h2{font-family:var(--font-display);font-size:1.8rem;color:var(--brass);margin-bottom:0.5rem}
+        .tier-verdict-banner p{font-family:var(--font-mono);font-size:0.8rem;color:rgba(255,255,255,0.8)}
+
+        /* ── SECTIONS ── */
+        .section{max-width:1160px;margin:0 auto;padding:52px 32px}
+        .section-header{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+        .section-title{font-family:var(--font-display);font-size:22px;font-weight:600}
+        .section-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--brass)}
+        .section-rule{flex:1;height:1px;background:var(--rule)}
+
+        /* ── CANDIDATE CARDS ── */
+        .candidates-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+        .candidate-card{background:var(--chalk);border:1px solid var(--rule);overflow:hidden;transition:box-shadow 0.2s;cursor:pointer}
+        .candidate-card:hover{box-shadow:0 6px 24px rgba(26,31,46,0.1)}
+        .candidate-card.top-match{border-color:var(--brass);box-shadow:0 0 0 2px var(--brass)}
+        .card-rank-banner{background:var(--ink);color:var(--chalk);font-family:var(--font-mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:6px 16px;display:flex;align-items:center;justify-content:space-between}
+        .card-rank-banner.gold{background:var(--brass);color:var(--ink)}
+        .card-body{padding:20px}
+        .card-party-tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border:1px solid currentColor;margin-bottom:10px}
+        .card-party-tag.anc{color:#1A5C3A}.card-party-tag.da{color:#003DA5}.card-party-tag.ifp{color:#5A3E85}.card-party-tag.eff{color:#8B0000}.card-party-tag.mk{color:#2D2D2D}.card-party-tag.pa{color:#2D2D2D}.card-party-tag.ff{color:#003DA5}.card-party-tag.rise{color:var(--brass)}.card-party-tag.bosa{color:var(--brass)}.card-party-tag.action{color:#003DA5}
+        .card-candidate-name{font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px}
+        .card-leader-title{font-size:12px;color:var(--slate);margin-bottom:14px}
+        .card-match-label{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--slate);margin-bottom:4px}
+        .card-match-pct{color:var(--ink);font-weight:700}
+        .bar-track{height:5px;background:var(--rule);border-radius:2px;overflow:hidden;margin-bottom:14px}
+        .bar-fill{height:100%;border-radius:2px}
+        .bar-fill.high{background:var(--green)}.bar-fill.mid{background:var(--brass)}.bar-fill.low{background:var(--slate)}
+        .card-summary{font-size:13px;color:var(--slate);line-height:1.65;margin-bottom:14px;border-top:1px solid var(--rule);padding-top:12px}
+        .card-meta-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+        .card-meta-key{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+        .card-meta-val{color:var(--ink);font-weight:500;font-size:12px}
+        .card-pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid var(--rule);padding-top:12px}
+        .pc-head{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;display:block}
+        .pros-list .pc-head{color:var(--green)}.cons-list .pc-head{color:var(--red)}
+        .pc-item{display:flex;gap:5px;color:var(--slate);margin-bottom:4px;line-height:1.4;font-size:12px}
+        .pc-item::before{content:'—';color:var(--muted);flex-shrink:0;font-size:10px;margin-top:1px}
+        .card-footer{background:var(--parchment);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule);font-family:var(--font-mono);font-size:9px;color:var(--muted)}
+
+        /* ── RANKED LIST ── */
+        .ranked-list{margin-top:40px}
+        .ranked-row{display:flex;align-items:center;gap:16px;padding:10px 16px;border:1px solid var(--rule);background:var(--chalk);margin-bottom:6px;cursor:pointer;transition:background 0.15s}
+        .ranked-row:hover{background:rgba(201,168,76,0.05)}
+        .ranked-pos{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--brass);min-width:24px}
+        .ranked-name{font-family:var(--font-display);font-size:15px;font-weight:600;flex:1}
+        .ranked-short{font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-right:8px}
+        .ranked-bar-wrap{width:120px;height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+        .ranked-bar-fill{height:100%;background:var(--brass)}
+        .ranked-pct{font-family:var(--font-mono);font-size:10px;color:var(--ink);min-width:36px;text-align:right}
+
+        /* ── COMPASS TABS ── */
+        .compasses-bg{background:var(--ink)}
+        .compasses-section{max-width:1160px;margin:0 auto;padding:52px 32px}
+        .compasses-section .section-header{border-bottom-color:rgba(255,255,255,0.1)}
+        .compasses-section .section-title{color:var(--chalk)}
+        .compass-tabs{display:flex;gap:0;margin-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .compass-tab{font-family:var(--font-mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);padding:10px 22px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;background:none;border-top:none;border-left:none;border-right:none}
+        .compass-tab:hover{color:var(--chalk)}
+        .compass-tab.active{color:var(--brass);border-bottom-color:var(--brass)}
+        .compass-panel{display:none}
+        .compass-panel.active{display:block}
+
+        /* ── COMPASS 1 LAYOUT ── */
+        .c1-grid{display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:start}
+        .c1-legend{display:flex;flex-direction:column;gap:18px}
+        .c1-legend-title{font-family:var(--font-display);font-size:17px;color:var(--chalk);font-weight:600;margin-bottom:4px}
+        .c1-axis-row{border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:14px}
+        .c1-axis-name{font-family:var(--font-mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--brass);margin-bottom:6px}
+        .c1-axis-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+        .c1-axis-end{font-size:10px;color:var(--muted);white-space:nowrap;width:90px}
+        .c1-axis-end.right{text-align:right}
+        .c1-axis-track{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;position:relative}
+        .c1-axis-fill{position:absolute;top:0;height:100%;background:var(--brass);border-radius:2px;opacity:0.85}
+        .c1-axis-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:var(--brass);box-shadow:0 0 6px rgba(201,168,76,0.6)}
+        .c1-score{font-family:var(--font-mono);font-size:10px;color:var(--chalk);opacity:0.6}
+        .c1-verdict{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:18px;margin-top:4px}
+        .c1-verdict-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
+        .c1-verdict-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
+
+        /* ── COMPASS 2 LAYOUT ── */
+        .c2-wrap{display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
+        .c2-info{display:flex;flex-direction:column;gap:16px}
+
+        /* ── IDEOLOGICAL CONCLUSION ── */
+        .c3-conclusion{max-width:700px;margin:0 auto;color:var(--chalk)}
+        .c3-ideology-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:14px;margin-bottom:1rem}
+        .c3-ideology-card.nearest-1{border-color:rgba(201,168,76,0.6)}
+        .c3-ideology-rank{font-family:var(--font-mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--brass);margin-bottom:4px}
+        .c3-ideology-name{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--chalk);margin-bottom:6px}
+        .c3-ideology-desc{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.55}
+        .tradeoffs-box{font-size:0.8rem;background:rgba(255,255,255,0.04);border-left:2px solid var(--brass);padding:0.5rem;margin-top:0.5rem}
+
+        /* ── IDEOLOGY SUMMARY ── */
+        .ideology-section{background:var(--chalk)}
+        .ideology-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+        .ideology-card{background:var(--parchment);border:1px solid var(--rule);padding:28px}
+        .ideology-card-title{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+        .ideology-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+        .ideology-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;background:var(--ink);color:var(--chalk)}
+        .ideology-tag.accent{background:var(--brass);color:var(--ink)}
+        .ideology-body{font-size:13px;color:var(--slate);line-height:1.75}
+        .scores-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+        .scores-table td{padding:8px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
+        .scores-table td:last-child{text-align:right}
+        .score-key{font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--slate);padding-right:12px;width:50%}
+        .score-bar-inline{width:80px;height:4px;background:var(--rule);display:inline-block;border-radius:2px;overflow:hidden;margin-right:8px;vertical-align:middle}
+        .score-bar-fill{height:100%;background:var(--brass);border-radius:2px}
+        .score-val{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--ink)}
+
+        /* ── DOSSIER MODAL ── */
+        .dossier-modal{position:fixed;inset:0;background:rgba(26,31,46,0.9);z-index:300;display:none;align-items:center;justify-content:center;padding:2rem}
+        .dossier-modal.open{display:flex}
+        .dossier-card{background:var(--parchment);max-width:800px;width:100%;max-height:80vh;overflow-y:auto;padding:2rem;border:1px solid var(--brass);position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+        .dossier-close{position:absolute;top:1rem;right:1rem;background:transparent;border:1px solid var(--rule);color:var(--ink);width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+        .dossier-close:hover{background:var(--brass)}
+        .dossier-section{margin-bottom:1.5rem}
+        .dossier-section h3{font-family:var(--font-display);font-size:1.2rem;color:var(--ink);margin-bottom:0.5rem}
+        .dossier-section p,.dossier-section li{font-size:0.9rem;color:var(--slate);line-height:1.6}
+        .dossier-pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .dossier-pros{color:var(--green)}.dossier-cons{color:var(--red)}
+
+        /* ── FOOTER ── */
+        .footer-cta{background:var(--ink);border-top:3px solid var(--brass);margin-top:3rem}
+        .footer-inner{max-width:1160px;margin:0 auto;padding:40px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+        .footer-heading{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--chalk);margin-bottom:4px}
+        .footer-sub{font-size:13px;color:var(--muted)}
+        .btn-primary{background:var(--brass);color:var(--ink);border:none;padding:12px 28px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-block}
+        .btn-ghost{background:transparent;color:var(--chalk);border:1px solid rgba(255,255,255,0.2);padding:12px 28px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;margin-left:10px;text-decoration:none;display:inline-block}
+        .btn-primary:hover{background:var(--brass-lt)}
+        .btn-ghost:hover{border-color:var(--chalk)}
+
+        /* ── MINI PLAYER ── */
+        #mini-player{position:fixed;bottom:1rem;right:1rem;z-index:90;background:rgba(26,31,46,0.94);border:1px solid rgba(201,168,76,0.2);padding:0.5rem 0.75rem;display:flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.55rem;color:rgba(201,168,76,0.8)}
+        #mini-player button{background:none;border:none;color:rgba(201,168,76,0.7);cursor:pointer;font-size:0.7rem}
+        #mini-player button:hover{color:var(--brass)}
+
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .animate{animation:fadeUp 0.5s ease both}
+        .delay-1{animation-delay:0.1s}.delay-2{animation-delay:0.2s}.delay-3{animation-delay:0.35s}.delay-4{animation-delay:0.5s}
+
+        @media(max-width:900px){
+            .candidates-grid,.ideology-grid{grid-template-columns:1fr}
+            .hero-inner,.c1-grid,.c2-wrap{grid-template-columns:1fr}
+            .compass-tabs{flex-wrap:wrap}
+            .footer-inner{flex-direction:column;align-items:flex-start}
+            .masthead-inner{flex-direction:column;align-items:flex-start}
+        }
+        @media print{
+            #results-header,.tab-nav,.results-footer,#disclaimer-overlay,#mini-player,.no-print{display:none!important}
+            .panel{display:block!important;page-break-inside:avoid}
+            body{background:#fff;color:#000}
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── LOADING OVERLAY ── -->
+<div id="results-loading">
+    <div class="loading-title">VERITAS</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+    <div class="loading-text">Preparing your results</div>
+</div>
+
+<!-- ── DISCLAIMER OVERLAY ── -->
+<div id="disclaimer-overlay">
+    <div class="disclaimer-card">
+        <div class="disclaimer-scroll" id="disclaimer-scroll">
+What you are about to see is the output of an algorithm —
+not a verdict, not a truth, and not a directive.
+
+VERITAS has mapped your responses against publicly recorded 
+party positions, constitutional provisions, and political 
+theory frameworks. It has done so as accurately and 
+neutrally as it can. But it is imperfect. Every scoring 
+decision carries assumptions. Every question carries 
+framing. No instrument of this kind is without bias.
+
+Your result is a mirror — not a prescription.
+
+─────────────────────────────────────────────────
+
+THIS INSTRUMENT CANNOT:
+
+— Tell you who to vote for
+— Capture the full complexity of your political identity  
+— Replace reading party manifestos directly
+— Account for your lived experience, community, 
+   history, or conscience
+— Predict how any party will govern once elected
+
+─────────────────────────────────────────────────
+
+YOUR VOTE IS YOURS ALONE.
+
+Section 19 of the Constitution guarantees you the right 
+to vote in secret. No algorithm, no result, no score 
+should influence that act without your full, conscious, 
+independent reflection.
+
+If your result surprises you — good. Sit with it.
+If your result confirms what you already believed — 
+interrogate that too.
+
+─────────────────────────────────────────────────
+
+A NOTE ON RADICAL OR UNEXPECTED RESULTS
+
+If your compass places you far outside the current 
+South African party spectrum, this does not mean 
+you are wrong. It may mean the spectrum has not 
+caught up with you. Political parties represent 
+coalitions of compromises, not pure positions.
+
+─────────────────────────────────────────────────
+
+VERITAS IS:
+
+Advisory · Experimental · Imperfect · Open to critique
+Built in South Africa · For South Africa · Under Section 19
+
+We do not collect your data.
+We do not endorse any party.
+We do not replace your judgment.
+
+─────────────────────────────────────────────────
+
+"Democracy is not a machine that runs itself. 
+It requires the active, informed participation 
+of every citizen who benefits from it."
+
+─────────────────────────────────────────────────
+
+I have read and understood this notice.
+My political decisions remain my own.
+        </div>
+        <button class="disclaimer-btn" id="disclaimer-btn" disabled>I Understand — Show My Results</button>
+    </div>
+</div>
+
+<!-- ── MASTHEAD ── -->
+<header class="masthead">
+    <div class="masthead-inner">
+        <div class="masthead-brand">
+            <span class="masthead-eyebrow">South African Civic Intelligence</span>
+            <a href="index.html" style="text-decoration:none;color:inherit;"><div class="masthead-title">VERITAS</div></a>
+        </div>
+        <div class="masthead-meta">
+            <div>Assessment completed</div>
+            <div id="report-date"></div>
+            <div>Ref: V-<span id="report-id"></span></div>
+        </div>
+    </div>
+</header>
+
+<main id="results-root">
+    <!-- dynamically filled -->
+</main>
+
+<!-- ── DOSSIER MODAL ── -->
+<div id="dossier-modal" class="dossier-modal">
+    <div class="dossier-card">
+        <button class="dossier-close" onclick="closeDossier()">✕</button>
+        <div id="dossier-content"></div>
+    </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer-cta">
+    <div class="footer-inner">
+        <div>
+            <div class="footer-heading">Know where you stand. Now act on it.</div>
+            <div class="footer-sub">Print your report, explore party manifestos, or retake the survey.</div>
+        </div>
+        <div>
+            <button class="btn-primary" onclick="window.print()">Print Full Report</button>
+            <a href="survey.html" class="btn-ghost">Retake Survey</a>
+            <a href="index.html" class="btn-ghost">Home</a>
+        </div>
+    </div>
+</div>
+
+<!-- ── MINI PLAYER ── -->
+<div id="mini-player">
+    <span id="mini-track">Asimbonanga</span>
+    <button onclick="toggleMiniPlay()" id="mini-play-btn">▶</button>
+    <button onclick="nextMiniTrack()">⏭</button>
+</div>
+
+<script src="js/engine.js"></script>
+<script src="js/parties.js"></script>
+<script src="js/dossier.js"></script>
+<script src="js/ideologies.js"></script>
+<script src="js/charts.js"></script>
+<script>
+    // ── Disclaimer scroll logic ──
+    const scrollDiv = document.getElementById('disclaimer-scroll');
+    const disclaimerBtn = document.getElementById('disclaimer-btn');
+    scrollDiv.addEventListener('scroll', function() {
+        const atBottom = scrollDiv.scrollHeight - scrollDiv.scrollTop <= scrollDiv.clientHeight + 10;
+        if (atBottom) {
+            disclaimerBtn.classList.add('active');
+            disclaimerBtn.disabled = false;
+        }
+    });
+
+    if (localStorage.getItem('veritas_disclaimer_accepted') === 'true') {
+        document.getElementById('disclaimer-overlay').style.display = 'none';
+    }
+    window.dismissDisclaimer = function() {
+        localStorage.setItem('veritas_disclaimer_accepted', 'true');
+        document.getElementById('disclaimer-overlay').style.display = 'none';
+    };
+    disclaimerBtn.addEventListener('click', dismissDisclaimer);
+
+    // ── Dossier modal ──
+    window.closeDossier = () => document.getElementById('dossier-modal').classList.remove('open');
+    function openDossier(short) {
+        const dossier = VERITAS_DOSSIERS[short];
+        if (!dossier) return;
+        const content = document.getElementById('dossier-content');
+        content.innerHTML = `
+            <h2 style="font-family:var(--font-display);font-size:1.8rem;color:var(--ink)">${short}</h2>
+            ${dossier.history ? `<div class="dossier-section"><h3>History</h3><p>${dossier.history}</p></div>` : ''}
+            ${dossier.leader ? `<div class="dossier-section"><h3>Leader</h3><p>${dossier.leader}</p></div>` : ''}
+            ${dossier.successes ? `<div class="dossier-section"><h3>Successes</h3><ul>${dossier.successes.map(s=>`<li>${s}</li>`).join('')}</ul></div>` : ''}
+            ${dossier.scandals ? `<div class="dossier-section"><h3>Scandals</h3><ul>${dossier.scandals.map(s=>`<li>${s}</li>`).join('')}</ul></div>` : ''}
+            ${dossier.criticalFlaws ? `<div class="dossier-section"><h3>Critical Flaws</h3><ul>${dossier.criticalFlaws.map(f=>`<li>${f}</li>`).join('')}</ul></div>` : ''}
+            <div class="dossier-pros-cons">
+                <div class="dossier-pros"><strong>Why Vote</strong><p>${dossier.whyVote||'—'}</p></div>
+                <div class="dossier-cons"><strong>Why Not Vote</strong><p>${dossier.whyNotVote||'—'}</p></div>
+            </div>
+        `;
+        document.getElementById('dossier-modal').classList.add('open');
+    }
+
+    // ── Report metadata ──
+    const now = new Date();
+    document.getElementById('report-date').textContent = now.toLocaleDateString('en-ZA',{year:'numeric',month:'long',day:'numeric'}) + ' · ' + now.toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',hour12:false});
+    document.getElementById('report-id').textContent = Math.random().toString(36).substring(2,10).toUpperCase();
+
+    // ── Load results ──
+    const raw = localStorage.getItem('veritas_results');
+    const answersRaw = localStorage.getItem('veritas_answers');
+    if (!raw) {
+        document.getElementById('results-root').innerHTML = '<div style="text-align:center;padding:4rem;font-family:var(--font-display);font-size:1.5rem;color:var(--ink)">No results found.<br><a href="survey.html" style="color:var(--brass)">Take the survey first</a>.</div>';
+        document.getElementById('results-loading').style.display = 'none';
+    } else {
+        const axis = JSON.parse(raw);
+        const answers = answersRaw ? JSON.parse(answersRaw) : {};
+        const answerCount = Object.keys(answers).length;
+
+        // Staleness warnings
+        let warnings = [];
+        if (answerCount > 0) {
+            let neutralCount = 0, valueCounts = {};
+            Object.values(answers).forEach(a => {
+                if (a.answer === 0) neutralCount++;
+                valueCounts[a.answer] = (valueCounts[a.answer]||0)+1;
+            });
+            const neutralPct = (neutralCount/answerCount)*100;
+            const extremePct = ((valueCounts[-2]||0)+(valueCounts[2]||0))/answerCount*100;
+            if (neutralPct > 70) warnings.push('More than 70% of your answers were Neutral. Your results may lack clear ideological definition.');
+            if (extremePct > 80) warnings.push('You strongly agreed or disagreed with almost everything. Consider revisiting your answers.');
+        }
+
+        const matches = VERITAS_ENGINE.matchParties(axis, window.VERITAS_PARTIES || []);
+        const topMatch = matches[0];
+        const ideology = VERITAS_ENGINE.evaluateIdeology(axis.economicLeft, axis.economicRight, axis.authoritarian, axis.libertarian);
+        const redress = VERITAS_ENGINE.computeRedressIndex(axis);
+        const inst = VERITAS_ENGINE.computeInstitutionalIndex(axis);
+        const globalX = (axis.economicRight||0)-(axis.economicLeft||0);
+        const globalY = (axis.authoritarian||0)-(axis.libertarian||0);
+        const saX = (axis.stability||0)-(axis.transformation||0);
+        const saY = (axis.stateAuthority||0)-(axis.constitutionalLiberalism||0);
+
+        // Tier
+        const tier = determineTier(matches);
+        const tierLabels = ['','Tier 1 – Clear Match','Tier 2 – Spread Alignment','Tier 3 – No Meaningful Alignment','Tier 4 – Balanced Ideal'];
+        const tierText = {
+            1: `You align strongly with <strong>${topMatch.name} (${topMatch.match}%)</strong>. Click the party cards below for a full critical dossier.`,
+            2: `You are a pragmatic swing voter. Multiple parties share your values. Your three closest: <strong>${matches.slice(0,3).map(p=>p.name+' ('+p.match+'%)').join(', ')}</strong>.`,
+            3: `No registered party closely matches your views. You lean toward <strong>${ideology.title}</strong> — ${ideology.summary||''}`,
+            4: `Your responses mirror the constitutional compromise. The gap between what the Constitution mandates and what parties deliver is your result.`
+        }[tier.tier] || '';
+
+        const ecoLabel = globalX > 0.3 ? 'Right-leaning' : globalX < -0.3 ? 'Left-leaning' : 'Centrist';
+        const socLabel = globalY > 0.3 ? 'Authoritarian' : globalY < -0.3 ? 'Libertarian' : 'Moderate';
+        const saQuadrant = saX > 0 ? (saY > 0 ? 'Institutional Enforcer' : 'Constitutional Reformer') : (saY > 0 ? 'Radical Transformationist' : 'Progressive Reformer');
+        const heroHeadline = `${ecoLabel} <em>${socLabel}</em><br>with a ${saQuadrant} outlook`;
+
+        // Build HTML
+        let html = '';
+        if (warnings.length) {
+            html += `<div style="background:rgba(201,168,76,0.2);border-left:3px solid var(--brass);padding:1rem;margin:1rem auto;max-width:800px;font-family:var(--font-mono);font-size:0.8rem;">⚠ ${warnings.join(' ')}</div>`;
+        }
+
+        html += `
+        <div class="tier-verdict-banner">
+            <h2>${tierLabels[tier.tier]}</h2>
+            <p>${tierText}</p>
+        </div>
+
+        <section class="hero-banner animate">
+            <div class="hero-inner">
+                <div>
+                    <div class="hero-label">Your Political Profile</div>
+                    <h1 class="hero-headline">${heroHeadline}</h1>
+                    <p class="hero-desc">Based on your ${answerCount} responses, you align with ${(ideology.summary||'').toLowerCase()} Your position bridges institutional reform with social equity priorities within the South African political landscape.</p>
+                </div>
+                <div class="hero-score-block">
+                    <div class="hero-score-num">${topMatch ? topMatch.match : 0}%</div>
+                    <div class="hero-score-label">Top Match Alignment</div>
+                    <div class="hero-score-sub">${topMatch ? topMatch.name : 'N/A'}</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="insight-strip animate delay-1">
+            <div class="insight-inner">
+                <div class="insight-item"><span class="insight-num">${answerCount}</span><span class="insight-label">Questions answered</span></div>
+                <div class="insight-item"><span class="insight-num">${(window.VERITAS_PARTIES||[]).length}</span><span class="insight-label">Parties assessed</span></div>
+                <div class="insight-item"><span class="insight-num">2</span><span class="insight-label">Compass dimensions</span></div>
+                <div class="insight-item"><span class="insight-num">6</span><span class="insight-label">SA-specific axes</span></div>
+            </div>
+        </div>
+
+        <div style="background:var(--parchment)">
+        <div class="section animate delay-2">
+            <div class="section-header">
+                <span class="section-eyebrow">Closest Matches</span>
+                <h2 class="section-title">Parties & Candidates</h2>
+                <div class="section-rule"></div>
+                <span style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Ranked by alignment</span>
+            </div>
+            <div class="candidates-grid">
+                ${renderCandidateCards(matches.slice(0,3))}
+            </div>
+            ${renderRankedList(matches.slice(3,8))}
+        </div>
+        </div>
+
+        <hr class="page-divider" style="border-top:1px solid var(--rule);margin:0;">
+
+        <div class="compasses-bg">
+        <div class="compasses-section animate delay-3">
+            <div class="section-header">
+                <span class="section-eyebrow">Political Mapping</span>
+                <h2 class="section-title" style="color:var(--chalk)">Your Political Compasses & Ideological Conclusion</h2>
+                <div class="section-rule" style="background:rgba(255,255,255,0.1)"></div>
+            </div>
+            <div class="compass-tabs" id="compass-tabs">
+                <button class="compass-tab active" data-panel="c1">I · SA Context</button>
+                <button class="compass-tab" data-panel="c2">II · Global Standard</button>
+                <button class="compass-tab" data-panel="c3">III · Ideological Conclusion</button>
+            </div>
+            <div id="c1" class="compass-panel active">
+                <div class="c1-grid">
+                    <div class="c1-svg-wrap" id="svg-sa"></div>
+                    <div class="c1-legend" id="sa-legend"></div>
+                </div>
+            </div>
+            <div id="c2" class="compass-panel">
+                <div class="c2-wrap">
+                    <div class="c2-svg-wrap" id="svg-global"></div>
+                    <div class="c2-info" id="global-info"></div>
+                </div>
+            </div>
+            <div id="c3" class="compass-panel">
+                <div class="c3-conclusion">
+                    <div class="c1-legend-title" style="font-size:20px; margin-bottom:1rem;">Your Ideological Home</div>
+                    <div id="ideo-conclusion-content"></div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="ideology-section">
+        <div class="section animate delay-4">
+            <div class="section-header">
+                <span class="section-eyebrow">Deep Profile</span>
+                <h2 class="section-title">Ideological Summary & Policy Fingerprint</h2>
+                <div class="section-rule"></div>
+            </div>
+            <div class="ideology-grid">
+                <div class="ideology-card">
+                    <div class="ideology-card-title">Your Ideological Cluster</div>
+                    <div class="ideology-tags" id="ideology-tags"></div>
+                    <p class="ideology-body">${ideology.summary||''} ${ideology.relevance||''} You sit within the reformist tradition — valuing democratic institutions as non-negotiable while pushing for active redistribution and rights expansion within those structures.</p>
+                </div>
+                <div class="ideology-card">
+                    <div class="ideology-card-title">Policy Domain Scores</div>
+                    <table class="scores-table" id="scores-table"></table>
+                </div>
+                <div class="ideology-card">
+                    <div class="ideology-card-title">Strengths of Your Position</div>
+                    <p class="ideology-body">Your profile reflects a coherent set of values: you score highly on institutional accountability and civil rights, while maintaining pragmatic flexibility on economic questions. This gives you credibility across the centre of the electorate.</p>
+                </div>
+                <div class="ideology-card">
+                    <div class="ideology-card-title">Tensions & Blind Spots</div>
+                    <p class="ideology-body">The gap between procedural justice (fixing institutions) and substantive justice (redressing historical inequity) is large. Your moderate land reform stance places you in tension with those who view expropriation as urgent.</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        `;
+
+        document.getElementById('results-root').innerHTML = html;
+
+        // Render compasses
+        VERITAS_CHARTS.renderSACompass('svg-sa', saX, saY, axis);
+        VERITAS_CHARTS.renderGlobalCompass('svg-global', globalX, globalY, axis);
+
+        // Compass tab switching
+        document.querySelectorAll('#compass-tabs .compass-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const panelId = this.dataset.panel;
+                document.querySelectorAll('.compass-panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('#compass-tabs .compass-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById(panelId).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // Ideological conclusion (top 3 nearest)
+        if (typeof VERITAS_ENGINE.getNearestIdeologies === 'function') {
+            const nearest = VERITAS_ENGINE.getNearestIdeologies(axis, 3);
+            let conclusionHTML = '';
+            nearest.forEach((ideo, i) => {
+                const isTop = i === 0;
+                conclusionHTML += `
+                <div class="c3-ideology-card${isTop ? ' nearest-1' : ''}">
+                    <div class="c3-ideology-rank">#${i+1} · ${ideo.quadrant||''} · Distance: ${ideo.distance.toFixed(2)}</div>
+                    <div class="c3-ideology-name" style="font-size:${isTop ? '1.2rem' : '1rem'};">${ideo.title}</div>
+                    <div class="c3-ideology-desc" style="font-size:0.9rem; color:rgba(255,255,255,0.6);">${ideo.tagline}</div>
+                    <p style="font-size:0.85rem; color:rgba(255,255,255,0.5); margin-top:0.5rem;">${ideo.whyYouBelong||''}</p>
+                    <div class="tradeoffs-box">${ideo.tradeoffs||''}</div>
+                    <div style="font-size:0.75rem; color:var(--brass); margin-top:0.5rem;">
+                        <strong>SA Manifestation:</strong> ${ideo.saManifestation||''}<br>
+                        <strong>Historical:</strong> ${ideo.historical||''}
+                    </div>
+                    <div style="margin-top:0.5rem; display:flex; gap:1rem; font-size:0.7rem;">
+                        <span>Economic Intervention: ${ideo.metrics.econIntervention}/10</span>
+                        <span>Individual Autonomy: ${ideo.metrics.individualAutonomy}/10</span>
+                        <span>Stability: ${ideo.metrics.stability}</span>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('ideo-conclusion-content').innerHTML = conclusionHTML;
+        }
+
+        // Ideology tags
+        const tagsContainer = document.getElementById('ideology-tags');
+        const tags = [ideology.title, ...(ideology.title.includes('Social') ? ['Welfare State'] : []), ecoLabel, socLabel, 'Constitutionalism'];
+        tagsContainer.innerHTML = tags.map((t,i) => `<span class="ideology-tag${i===0?' accent':''}">${t}</span>`).join('');
+
+        // Policy domain scores
+        const domainScores = {
+            'Governance & Accountability': Math.round(((axis.constitutionalLiberalism||0)+(axis.secularDemocracy||0)+2)/4*100),
+            'Social & Civil Rights': Math.round(((axis.individualRights||0)+(axis.libertarian||0)+2)/4*100),
+            'Education & Health': Math.round(((axis.ubuntuCollectivism||0)+(axis.economicLeft||0)+2)/4*100),
+            'Foreign Policy & Trade': Math.round(((axis.westernAlignment||0)-(axis.panAfrican||0)+2)/4*100),
+            'Environmental Policy': Math.round(((axis.transformation||0)+(axis.westernAlignment||0)+2)/4*100),
+            'Economic Policy': Math.round(((axis.economicRight||0)-(axis.economicLeft||0)+2)/4*100),
+            'Security & Justice': Math.round(((axis.authoritarian||0)+(axis.stateAuthority||0)+2)/4*100),
+            'Land & Property Rights': Math.round(((axis.transformation||0)+(axis.racialRedress||0)+2)/4*100)
+        };
+        document.getElementById('scores-table').innerHTML = Object.entries(domainScores).map(([k,v]) => `
+            <tr><td class="score-key">${k}</td><td><span class="score-bar-inline"><span class="score-bar-fill" style="width:${v}%"></span></span></td><td><span class="score-val">${v}</span></td></tr>
+        `).join('');
+
+        // Coalition stability
+        if (matches.length >= 3) {
+            const top3 = matches.slice(0,3);
+            const neutralityScore = top3.reduce((sum,p) => sum + (p.ideologicalNeutrality==='pragmaticNeutral'?2:p.ideologicalNeutrality==='conditionalAligner'?1:0), 0);
+            const operativeScore = top3.reduce((sum,p) => sum + (p.operationalAgent==='technocratic'||p.operationalAgent==='bureaucratic'?1:0), 0);
+            const stability = neutralityScore>=4&&operativeScore>=2?'Likely stable':neutralityScore>=3?'Possible with compromises':'Unlikely – deep ideological divides';
+            const coalitionDiv = document.createElement('div');
+            coalitionDiv.className = 'section';
+            coalitionDiv.innerHTML = `<div class="section-header"><span class="section-eyebrow">Coalition Analysis</span><h2 class="section-title">Coalition Stability</h2><div class="section-rule"></div></div>
+                <p style="font-size:0.95rem;color:var(--ink);"><strong>Top 3:</strong> ${top3.map(p=>p.name).join(' + ')}</p>
+                <p style="font-size:0.95rem;color:var(--ink);">Ideological flexibility: ${neutralityScore>=4?'High':neutralityScore>=3?'Moderate':'Low'} | Operational compatibility: ${operativeScore>=2?'Good':'Poor'}</p>
+                <p style="font-size:0.95rem;color:var(--ink);">Stability prediction: <strong>${stability}</strong></p>`;
+            document.getElementById('results-root').appendChild(coalitionDiv);
+        }
+
+        // Hide loading overlay
+        const loadingOverlay = document.getElementById('results-loading');
+        if (loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => { loadingOverlay.style.display = 'none'; }, 400);
+        }
+    }
+
+    function determineTier(matches) {
+        if (!matches.length) return {tier:3};
+        const top = matches[0].match;
+        if (top>=70 && (matches.length<2||matches[1].match<top-10)) return {tier:1};
+        if (matches.filter(m=>m.match>=50).length>=3) return {tier:2};
+        if (top<50) return {tier:3};
+        return {tier:4};
+    }
+
+    function renderCandidateCards(parties) {
+        return parties.map((p,i) => {
+            const barClass = p.match > 75 ? 'high' : p.match > 50 ? 'mid' : 'low';
+            const tagClass = (p.shortName||p.short||'').toLowerCase().replace(/\+/g,'');
+            const dossier = VERITAS_DOSSIERS[p.shortName||p.short] || {};
+            const pros = dossier.whyVote ? dossier.whyVote.split('. ').filter(s=>s.trim()).slice(0,3) : (p.pros||[]).slice(0,3);
+            const cons = dossier.whyNotVote ? dossier.whyNotVote.split('. ').filter(s=>s.trim()).slice(0,3) : (p.cons||[]).slice(0,3);
+            return `
+            <div class="candidate-card${i===0?' top-match':''} animate delay-${i+2}" onclick="openDossier('${p.shortName||p.short||p.name}')">
+                <div class="card-rank-banner${i===0?' gold':''}">
+                    <span>${String(i+1).padStart(2,'0')} — ${i===0?'Top Match':i===1?'Strong Match':'Moderate Match'}</span>
+                    <span>${i===0?'★ Best Fit':i===1?'↑ Notable Overlap':'~ Partial Overlap'}</span>
+                </div>
+                <div class="card-body">
+                    <span class="card-party-tag ${tagClass}">${p.shortName||p.short||p.name}</span>
+                    <div class="card-candidate-name">${p.leader||p.name}</div>
+                    <div class="card-leader-title">${p.leaderTitle||''}</div>
+                    <div class="card-match-label"><span>Alignment Score</span><span class="card-match-pct">${p.match}%</span></div>
+                    <div class="bar-track"><div class="bar-fill ${barClass}" style="width:${p.match}%"></div></div>
+                    <p class="card-summary">${p.desc||p.summary||''}</p>
+                    <div class="card-meta-row">
+                        <div><span class="card-meta-key">Ideology</span><span class="card-meta-val">${p.ideology||'N/A'}</span></div>
+                        <div><span class="card-meta-key">Position</span><span class="card-meta-val">${p.position||'N/A'}</span></div>
+                        <div><span class="card-meta-key">NA Seats (2024)</span><span class="card-meta-val">${p.seats||'N/A'}</span></div>
+                        <div><span class="card-meta-key">Founded</span><span class="card-meta-val">${p.founded||'N/A'}</span></div>
+                    </div>
+                    <div class="card-pros-cons">
+                        <div class="pros-list"><span class="pc-head">Aligned</span>${pros.map(pr=>`<div class="pc-item">${pr}</div>`).join('')}</div>
+                        <div class="cons-list"><span class="pc-head">Diverges</span>${cons.map(c=>`<div class="pc-item">${c}</div>`).join('')}</div>
+                    </div>
+                </div>
+                <div class="card-footer"><span>Est. ${p.founded||'N/A'}</span><span>${p.coalition||''}</span></div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderRankedList(parties) {
+        if (!parties.length) return '';
+        return `<div class="ranked-list"><div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--brass);margin-bottom:14px;">Remaining Top Matches</div>` +
+            parties.map((p,i) => `
+            <div class="ranked-row" onclick="openDossier('${p.shortName||p.short||p.name}')">
+                <span class="ranked-pos">${i+4}</span>
+                <span class="ranked-short">${p.shortName||p.short||p.name}</span>
+                <span class="ranked-name">${p.name}</span>
+                <div class="ranked-bar-wrap"><div class="ranked-bar-fill" style="width:${p.match}%"></div></div>
+                <span class="ranked-pct">${p.match}%</span>
+            </div>
+            `).join('') + '</div>';
+    }
+
+    // Mini player
+    const miniPlaylist = [
+        {title:'Asimbonanga',src:'assets/audio/'+encodeURI("Asimbonanga (Mandela) - Johnny Clegg & Savuka [UJujyzA2Q1E].mp3")},
+        {title:'Redemption Song',src:'assets/audio/'+encodeURI("Bob Marley & The Wailers - Redemption Song (Official Music Video) [yv5xonFSC4c].mp3")},
+        {title:'Fortunate Son',src:'assets/audio/'+encodeURI("Creedence Clearwater Revival - Fortunate Son [ZWijx_AgPiA].mp3")},
+        {title:'Pumped Up Kicks',src:'assets/audio/'+encodeURI("Foster The People - Pumped Up Kicks (Official Video) [SDTZ7iX4vTQ].mp3")},
+        {title:'Bring Back Nelson Mandela',src:'assets/audio/'+encodeURI("Hugh Masekela Bring Back Nelson Mandela [opUElVlG1BQ].mp3")},
+        {title:'Strange Fruit',src:'assets/audio/'+encodeURI("Nina Simone - Strange Fruit [BnuEMdUUrZQ].mp3")},
+        {title:'Sunday Bloody Sunday',src:'assets/audio/'+encodeURI("Sunday Bloody Sunday [Iqlzoz_jH3c].mp3")},
+        {title:'Zombie',src:'assets/audio/'+encodeURI("The Cranberries - Zombie (Official Music Video) [6Ejga4kJUts].mp3")}
+    ];
+    let miniCur=0,miniPlaying=false;
+    const miniAudio = new Audio(); miniAudio.volume=0.3;
+    function loadMiniTrack(i){ miniAudio.src = miniPlaylist[i].src; document.getElementById('mini-track').textContent = miniPlaylist[i].title; }
+    window.toggleMiniPlay = function(){
+        if(miniPlaying){ miniAudio.pause(); document.getElementById('mini-play-btn').textContent='▶'; miniPlaying=false; }
+        else{ if(!miniAudio.src) loadMiniTrack(miniCur); miniAudio.play().catch(()=>{}); document.getElementById('mini-play-btn').textContent='⏸'; miniPlaying=true; }
+    };
+    window.nextMiniTrack = function(){ miniCur=(miniCur+1)%miniPlaylist.length; loadMiniTrack(miniCur); if(miniPlaying) miniAudio.play().catch(()=>{}); };
+    miniAudio.addEventListener('ended', ()=>{ miniCur=(miniCur+1)%miniPlaylist.length; loadMiniTrack(miniCur); if(miniPlaying) miniAudio.play().catch(()=>{}); });
+    loadMiniTrack(0);
+</script>
+</body>
+</html>

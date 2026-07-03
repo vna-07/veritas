@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="assets/images/southa.ico" type="image/x-icon" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VERITAS — Where you stand. What is true. A civic instrument mapping your policy convictions onto the full South African political landscape." />
+  <title>VERITAS — South African Civic Compass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --cream: #FDFBF7;
+  --cream-dark: #F3EDE0;
+  --navy: #1B263B;
+  --navy-light: #2C3E5C;
+  --green: #1A3020;
+  --gold: #C5A059;
+  --gold-light: #D4B878;
+  --gold-dim: rgba(197,160,89,0.18);
+  --gold-border: rgba(197,160,89,0.3);
+  --ink: rgba(27,38,59,0.82);
+  --ink-light: rgba(27,38,59,0.55);
+  --ink-faint: rgba(27,38,59,0.28);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Lora', Georgia, serif;
+  --font-mono: 'Roboto Mono', 'Courier New', monospace;
+  --transition: 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--cream);color:var(--navy);font-family:var(--font-body);line-height:1.75;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.sr-only:focus{position:fixed;top:1rem;left:1rem;width:auto;height:auto;clip:auto;white-space:normal;background:var(--gold);color:var(--navy);padding:.5rem 1rem;z-index:9999;font-family:var(--font-mono);font-size:.75rem}
+*:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--cream-dark)}::-webkit-scrollbar-thumb{background:var(--gold)}
+.rule{border:none;height:1px;background:linear-gradient(to right,transparent,var(--gold) 20%,var(--gold) 80%,transparent)}
+.rule-short{width:4rem;background:linear-gradient(to right,var(--gold),transparent)}
+
+/* HEADER */
+#site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(253,251,247,0.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--gold-border);height:56px;display:flex;align-items:center}
+.header-inner{max-width:1200px;margin:0 auto;width:100%;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header-brand{display:flex;align-items:center;gap:.75rem}
+.header-flag{width:32px;height:20px;border-radius:2px;border:1px solid rgba(27,38,59,0.15);flex-shrink:0;background:linear-gradient(180deg,#007A4D 0%,#007A4D 33%,#FFB612 33%,#FFB612 66%,#E03C31 66%,#E03C31 100%)}
+.header-wordmark{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:.35em;color:var(--navy);text-decoration:none}
+.header-tagline{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.2em;color:var(--ink-light);text-transform:uppercase;display:none}
+@media(min-width:640px){.header-tagline{display:block}}
+.header-nav{display:flex;align-items:center;gap:.5rem}
+.lang-select{appearance:none;background:transparent;border:1px solid var(--gold-border);color:var(--navy);font-family:var(--font-mono);font-size:.65rem;letter-spacing:.1em;padding:.3rem .6rem;cursor:pointer;transition:border-color var(--transition)}
+.lang-select:hover{border-color:var(--gold)}
+.btn-methodology{background:transparent;border:1px solid var(--gold-border);color:var(--navy);font-family:var(--font-mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.35rem .85rem;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:.4rem}
+.btn-methodology:hover{background:var(--gold);border-color:var(--gold)}
+.btn-methodology svg{width:10px;height:10px}
+.btn-access{background:transparent;border:1px solid var(--gold-border);color:var(--navy);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition)}
+.btn-access:hover{background:var(--gold-dim);border-color:var(--gold)}
+
+/* METHODOLOGY MODAL */
+.modal-backdrop{position:fixed;inset:0;z-index:200;background:rgba(27,38,59,0.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.modal-backdrop.open{opacity:1;pointer-events:all}
+.modal-panel{background:var(--cream);border:1px solid var(--gold-border);max-width:680px;width:100%;max-height:88vh;overflow-y:auto;padding:3rem;position:relative;transform:translateY(24px);transition:transform .3s ease}
+.modal-backdrop.open .modal-panel{transform:translateY(0)}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;background:transparent;border:1px solid var(--gold-border);color:var(--navy);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--font-mono);font-size:.9rem;transition:all var(--transition)}
+.modal-close:hover{background:var(--gold)}
+.modal-section{margin-bottom:2rem}
+.modal-section:last-child{margin-bottom:0}
+.modal-eyebrow{font-family:var(--font-mono);font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.modal-h2{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--navy);margin-bottom:.6rem}
+.modal-sub-h{font-family:var(--font-mono);font-size:.65rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem;padding-top:1.5rem;border-top:1px solid var(--gold-border)}
+.modal-p{font-size:.88rem;line-height:1.85;color:var(--ink);margin-bottom:.7rem}
+.modal-p:last-child{margin-bottom:0}
+.tier-grid{display:grid;gap:.65rem;margin-top:.75rem}
+.tier-item{border-left:2px solid var(--gold);padding:.65rem .85rem;background:rgba(197,160,89,0.04)}
+.tier-label{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.2rem}
+.tier-desc{font-size:.83rem;color:var(--ink);line-height:1.7}
+.modal-disclaimer{background:var(--cream-dark);border:1px solid var(--gold-border);padding:1rem 1.25rem;font-family:var(--font-mono);font-size:.7rem;line-height:1.75;color:var(--ink-light);margin-top:1.5rem}
+.btn-return{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.5rem;background:transparent;border:1px solid var(--gold-border);color:var(--navy);font-family:var(--font-mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.5rem 1rem;cursor:pointer;transition:all var(--transition);text-decoration:none}
+.btn-return:hover{background:var(--gold-dim);border-color:var(--gold)}
+
+/* ACCESSIBILITY PANEL */
+.access-panel{position:fixed;top:56px;right:0;z-index:150;background:var(--cream);border:1px solid var(--gold-border);border-top:none;width:260px;padding:1.5rem;transform:translateX(100%);transition:transform var(--transition);box-shadow:-4px 0 24px rgba(27,38,59,0.08)}
+.access-panel.open{transform:translateX(0)}
+.access-panel-title{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem}
+.access-row{margin-bottom:1rem}
+.access-label{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:.4rem;display:block}
+.access-btns{display:flex;gap:.35rem;flex-wrap:wrap}
+.access-btn{background:transparent;border:1px solid var(--gold-border);color:var(--navy);font-family:var(--font-mono);font-size:.62rem;letter-spacing:.08em;padding:.28rem .55rem;cursor:pointer;transition:all var(--transition)}
+.access-btn:hover,.access-btn.active{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+
+/* HERO */
+#hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(27,38,59,0.9) 0%,rgba(26,48,32,0.78) 55%,rgba(27,38,59,0.85) 100%)}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 1.5rem;max-width:880px;margin:0 auto}
+.hero-eyebrow{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:rgba(197,160,89,0.65);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:.75rem}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:48px;height:1px;background:rgba(197,160,89,0.35)}
+.hero-title{font-family:var(--font-display);font-size:clamp(5rem,18vw,11rem);font-weight:900;color:var(--gold);letter-spacing:.25em;line-height:1;text-shadow:0 4px 40px rgba(0,0,0,0.55);margin-bottom:1.5rem}
+.hero-rule{width:80px;height:1px;margin:0 auto 1.5rem;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.hero-tagline{font-family:var(--font-display);font-size:clamp(.85rem,2.5vw,1.1rem);font-style:italic;color:rgba(253,251,247,0.85);max-width:560px;margin:0 auto .5rem;line-height:1.75}
+.hero-tagline em{color:var(--gold);font-style:normal}
+.hero-sub{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(253,251,247,0.45);margin-bottom:3rem}
+.mode-grid{display:flex;flex-direction:column;gap:.75rem;align-items:center;margin-bottom:2rem}
+@media(min-width:640px){.mode-grid{flex-direction:row;justify-content:center}}
+.mode-btn{position:relative;font-family:var(--font-display);letter-spacing:.1em;padding:1rem 2.25rem;min-width:190px;cursor:pointer;transition:all var(--transition);border:none;text-align:center}
+.mode-btn-label{font-size:.88rem;font-weight:700;display:block}
+.mode-btn-meta{font-size:.58rem;font-family:var(--font-mono);letter-spacing:.13em;opacity:.7;display:block;margin-top:.25rem}
+.mode-quick{background:transparent;border:1.5px solid rgba(197,160,89,0.55);color:var(--gold)}
+.mode-quick:hover{background:rgba(197,160,89,0.1);border-color:var(--gold)}
+.mode-standard{background:var(--gold);color:var(--navy);box-shadow:0 0 0 1px var(--gold),0 8px 32px rgba(197,160,89,0.3)}
+.mode-standard:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 0 0 1px var(--gold-light),0 14px 40px rgba(197,160,89,0.4)}
+.mode-deep{background:transparent;border:1.5px solid rgba(197,160,89,0.55);color:var(--gold)}
+.mode-deep:hover{background:rgba(197,160,89,0.1);border-color:var(--gold)}
+.recommended-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold);font-family:var(--font-mono);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;padding:.2rem .6rem;white-space:nowrap}
+.hero-notice{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.12em;color:rgba(253,251,247,0.35);line-height:1.9}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.scroll-hint span{font-family:var(--font-mono);font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(197,160,89,0.45)}
+.scroll-arrow{width:18px;height:18px;border-right:1px solid rgba(197,160,89,0.35);border-bottom:1px solid rgba(197,160,89,0.35);transform:rotate(45deg);animation:scrollBounce 2.2s ease-in-out infinite}
+@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0);opacity:.4}50%{transform:rotate(45deg) translateY(5px);opacity:.9}}
+@media(prefers-reduced-motion:reduce){.scroll-arrow{animation:none}}
+
+/* HISTORY BANNER & MODAL */
+.history-banner {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 12px 32px;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  cursor: default;
+}
+.history-banner button {
+  background: var(--navy);
+  color: var(--gold);
+  border: none;
+  padding: 6px 18px;
+  font-family: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: background 0.2s;
+}
+.history-banner button:hover { background: #2C3E5C; }
+
+.history-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,31,46,0.9);
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(8px);
+}
+.history-modal-overlay.open { display: flex; }
+.history-modal-card {
+  background: var(--parchment);
+  max-width: 800px;
+  width: 100%;
+  padding: 2.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid var(--gold);
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+}
+.history-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: 1px solid var(--gold-border);
+  color: var(--navy);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.history-close-btn:hover { background: var(--gold); }
+
+/* PARTY STRIP */
+.party-strip{background:var(--navy);padding:1.1rem 0;overflow:hidden;border-top:1px solid rgba(197,160,89,0.12);border-bottom:1px solid rgba(197,160,89,0.12)}
+.party-strip-inner{display:flex;align-items:center;gap:2rem;padding:0 2rem;overflow-x:auto;scrollbar-width:none;justify-content:center;flex-wrap:wrap}
+.party-strip-inner::-webkit-scrollbar{display:none}
+.party-chip{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(197,160,89,0.42);white-space:nowrap;transition:color var(--transition);cursor:default}
+.party-chip:hover{color:var(--gold)}
+.party-dot{color:rgba(197,160,89,0.18)}
+
+/* CONTENT SECTIONS */
+.content-section{max-width:760px;margin:0 auto;padding:5rem 2rem}
+.content-section+.content-section{padding-top:0}
+.section-number{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:.4rem}
+.section-heading{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;color:var(--navy);letter-spacing:.04em;margin-bottom:1.25rem;line-height:1.2}
+.section-rule{margin-bottom:2rem}
+.section-body{font-size:.96rem;line-height:1.85;color:var(--ink)}
+.section-body p{margin-bottom:1.1rem}
+.section-body p:last-child{margin-bottom:0}
+.section-body em{font-style:italic;color:var(--navy)}
+.section-body strong{font-weight:600;color:var(--navy)}
+
+/* PROCEDURE STEPS */
+.steps{display:flex;flex-direction:column;gap:2.5rem;margin-top:.5rem}
+.step{display:flex;gap:1.5rem;align-items:flex-start}
+.step-number{font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:var(--gold);line-height:1;min-width:2.5rem;padding-top:.1rem}
+.step-title{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:.6rem}
+.step-body{font-size:.9rem;line-height:1.8;color:var(--ink)}
+.step-body ul{list-style:none;padding:0;margin-top:.75rem}
+.step-body li{padding-left:1.2rem;position:relative;margin-bottom:.4rem;font-size:.87rem}
+.step-body li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:.72rem}
+.step-body li strong{color:var(--navy)}
+
+/* PLEDGE */
+.pledge-section{background:var(--navy);padding:5rem 2rem}
+.pledge-inner{max-width:760px;margin:0 auto}
+.pledge-quote{font-family:var(--font-display);font-size:clamp(.95rem,3vw,1.25rem);font-style:italic;color:rgba(253,251,247,0.82);line-height:1.8;text-align:center;max-width:540px;margin:0 auto .75rem}
+.pledge-attribution{text-align:center;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:3.5rem}
+.pledge-items{display:flex;flex-direction:column;gap:2rem}
+@media(min-width:640px){.pledge-items{flex-direction:row;gap:1.5rem}}
+.pledge-item{flex:1;border-top:1px solid rgba(197,160,89,0.25);padding-top:1.25rem}
+.pledge-item-title{font-family:var(--font-display);font-size:.88rem;font-weight:700;color:var(--gold);margin-bottom:.6rem}
+.pledge-item-body{font-size:.82rem;line-height:1.75;color:rgba(253,251,247,0.55)}
+
+/* PREVIEW */
+.preview-section{background:var(--cream-dark);border-top:1px solid var(--gold-border);border-bottom:1px solid var(--gold-border);padding:5rem 2rem}
+.preview-inner{max-width:760px;margin:0 auto}
+.preview-card{position:relative;border:1px solid var(--gold-border);background:var(--cream);padding:2rem;overflow:hidden}
+.preview-blur{filter:blur(7px);pointer-events:none;user-select:none;opacity:.65}
+.preview-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(253,251,247,0.5)}
+.fake-compass{width:160px;height:160px;border:1px solid var(--gold-border);border-radius:50%;position:relative;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center}
+.fake-axis-h,.fake-axis-v{position:absolute;background:var(--gold-border)}
+.fake-axis-h{width:100%;height:1px;top:50%}
+.fake-axis-v{height:100%;width:1px;left:50%}
+.fake-dot{width:12px;height:12px;background:var(--gold);border-radius:50%;position:absolute;top:35%;left:62%;transform:translate(-50%,-50%);box-shadow:0 0 0 5px rgba(197,160,89,0.18)}
+.fake-bars{display:flex;flex-direction:column;gap:.55rem}
+.fake-bar-row{display:flex;align-items:center;gap:.75rem}
+.fake-bar-label{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.08em;width:44px;color:var(--ink-light)}
+.fake-bar-track{flex:1;height:5px;background:var(--cream-dark)}
+.fake-bar-fill{height:100%;background:var(--gold)}
+.fake-bar-pct{font-family:var(--font-mono);font-size:.62rem;color:var(--ink-light);width:32px;text-align:right}
+
+/* DATA GRID */
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--gold-border);border:1px solid var(--gold-border);margin-top:2rem}
+.data-cell{background:var(--cream);padding:1.25rem}
+.data-cell-label{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.data-cell-value{font-size:.82rem;line-height:1.65;color:var(--ink)}
+.contact-line{margin-top:2rem;padding:1.25rem;border:1px solid var(--gold-border);background:var(--cream-dark);font-size:.82rem;color:var(--ink);display:flex;align-items:flex-start;gap:.75rem;line-height:1.7}
+.contact-line::before{content:'!';font-family:var(--font-mono);font-size:.62rem;background:var(--gold);color:var(--navy);width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;font-weight:700;margin-top:.1rem}
+#email-reveal-btn{background:transparent;border:none;color:var(--gold);font-family:var(--font-body);font-size:inherit;cursor:pointer;text-decoration:underline;padding:0}
+
+/* CHARTER */
+.charter-section{background:var(--navy);padding:5rem 2rem}
+.charter-inner{max-width:680px;margin:0 auto}
+.charter-preamble{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(197,160,89,0.45);text-align:center;margin-bottom:1.5rem}
+.charter-heading{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2rem);font-weight:900;letter-spacing:.1em;color:var(--gold);text-align:center;margin-bottom:2rem}
+.charter-body{font-size:.9rem;line-height:1.9;color:rgba(253,251,247,0.65)}
+.charter-body p{margin-bottom:1rem}
+.charter-list{list-style:none;padding:0;margin:1rem 0;border-left:1px solid rgba(197,160,89,0.25);padding-left:1.5rem}
+.charter-list li{margin-bottom:.6rem;font-size:.87rem;color:rgba(253,251,247,0.6);position:relative;padding-left:.75rem}
+.charter-list li::before{content:'—';position:absolute;left:-.75rem;color:rgba(197,160,89,0.45)}
+.charter-constitution{border:1px solid rgba(197,160,89,0.18);padding:1.25rem 1.5rem;margin:1.5rem 0;font-style:italic;font-family:var(--font-display);font-size:.9rem;color:rgba(253,251,247,0.55);line-height:1.8}
+.charter-constitution cite{display:block;margin-top:.75rem;font-family:var(--font-mono);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-style:normal}
+.charter-final{font-weight:600;color:rgba(253,251,247,0.88)!important}
+
+/* FOOTER */
+.site-footer{position:relative;width:100%;height:340px;background:radial-gradient(ellipse at 50% 100%,#0c101b 0%,#050507 100%);overflow:hidden;border-top:1px solid rgba(255,255,255,0.04)}
+#particle-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.footer-overlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(to top,rgba(5,5,7,0.7) 0%,transparent 100%);padding:2rem}
+.footer-code{font-family:'Courier New',monospace;font-size:clamp(2rem,8vw,3.5rem);font-weight:800;letter-spacing:.6em;text-transform:uppercase;background:linear-gradient(135deg,#ffffff 30%,#C5A059 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:codeGlow 4s ease-in-out infinite alternate;margin-bottom:.4rem}
+@keyframes codeGlow{0%{filter:drop-shadow(0 0 8px rgba(197,160,89,0.15))}100%{filter:drop-shadow(0 0 22px rgba(197,160,89,0.45))}}
+@media(prefers-reduced-motion:reduce){.footer-code{animation:none}}
+.footer-name{font-family:'Courier New',monospace;font-size:.78rem;font-weight:300;letter-spacing:.3rem;text-transform:uppercase;color:rgba(255,255,255,0.4);border-top:1px solid rgba(255,255,255,0.07);padding-top:.6rem;margin-bottom:1.5rem;width:260px}
+.footer-links{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-bottom:1rem}
+.footer-link{font-family:'Courier New',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);text-decoration:none;transition:color .2s}
+.footer-link:hover{color:var(--gold)}
+.footer-copy{font-family:'Courier New',monospace;font-size:.56rem;letter-spacing:.12em;color:rgba(255,255,255,0.18)}
+
+/* MUSIC PLAYER */
+#music-player{position:fixed;bottom:1.5rem;right:1.5rem;z-index:90;background:rgba(27,38,59,0.96);border:1px solid rgba(197,160,89,0.28);backdrop-filter:blur(14px);padding:.75rem 1rem;min-width:220px;max-width:260px}
+.player-track{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.1em;color:rgba(197,160,89,0.75);margin-bottom:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-artist{font-family:var(--font-mono);font-size:.54rem;letter-spacing:.08em;color:rgba(255,255,255,0.32);margin-bottom:.7rem}
+.player-controls{display:flex;align-items:center;gap:.45rem}
+.player-btn{background:transparent;border:none;color:rgba(197,160,89,0.65);cursor:pointer;font-size:.78rem;padding:.2rem;transition:color .2s;line-height:1}
+.player-btn:hover{color:var(--gold)}
+.player-btn.play{font-size:.95rem}
+.player-volume{flex:1;appearance:none;height:2px;background:rgba(197,160,89,0.18);border-radius:2px;cursor:pointer}
+.player-volume::-webkit-slider-thumb{appearance:none;width:8px;height:8px;background:var(--gold);border-radius:50%;cursor:pointer}
+.player-mute{background:transparent;border:none;color:rgba(255,255,255,0.28);cursor:pointer;font-size:.68rem;padding:.2rem}
+.player-mute:hover{color:var(--gold)}
+
+/* LOADING */
+#veritas-loading{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
+.loading-title{font-family:var(--font-display);font-size:2.5rem;font-weight:900;letter-spacing:.3em;color:var(--gold)}
+.loading-bar-track{width:200px;height:1px;background:rgba(197,160,89,0.18);overflow:hidden}
+.loading-bar-fill{height:100%;background:var(--gold);animation:loadFill 1.6s ease forwards}
+@keyframes loadFill{from{width:0}to{width:100%}}
+.loading-text{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(197,160,89,0.45)}
+
+@media(max-width:480px){.content-section,.pledge-section,.charter-section,.preview-section{padding:3.5rem 1.25rem}#music-player{display:none}}
+  </style>
+</head>
+<body>
+<a href="#main-content" class="sr-only">Skip to main content</a>
+
+<!-- METHODOLOGY MODAL -->
+<div id="methodology-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-panel">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-section">
+      <div class="modal-eyebrow">§ White Paper · 01</div>
+      <h2 class="modal-h2" id="modal-title">Methodology</h2>
+      <hr class="rule rule-short" style="margin-bottom:1.25rem;" />
+      <p class="modal-p">How we compute your ideological coordinates across three compasses and match you against 100+ registered South African parties.</p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-sub-h">The Three Compasses</div>
+      <p class="modal-p"><strong>SA Compass:</strong> Transformation ↔ Stability / State Authority ↔ Constitutional Liberalism. Built specifically for South Africa's political reality.</p>
+      <p class="modal-p"><strong>Global Compass:</strong> Economic Left ↔ Right / Authoritarian ↔ Libertarian. Classic political science model.</p>
+      <p class="modal-p"><strong>Ideological Map:</strong> Your position within a full taxonomy from Stalinism to Anarcho-Capitalism, with historical context and South African manifestations.</p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-sub-h">Party Scoring</div>
+      <p class="modal-p">Each of the 100+ parties has been assigned a position on all eight primary axes using 2024 election manifestos, Parliamentary Monitoring Group voting records, and Zondo Commission testimony. Alignment is computed as Euclidean distance in 8-dimensional space.</p>
+      <p class="modal-p">We also score parties on <strong>governance effectiveness</strong>, <strong>capital tier</strong>, and <strong>coalition compatibility</strong> — dimensions that pure policy matching misses.</p>
+    </div>
+    <div class="modal-section">
+      <div class="modal-sub-h">Five Outcome Tiers</div>
+      <div class="tier-grid">
+        <div class="tier-item">
+          <div class="tier-label">Tier 1 — Clear Match</div>
+          <div class="tier-desc">Strong alignment with one party. Full critical dossier: history, leadership, successes, scandals, coalition notes, and an honest “why vote / why not” verdict.</div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-label">Tier 2 — Spread Alignment</div>
+          <div class="tier-desc">Swing voter. Multiple parties above 50%. Analysis of your centre position and what it means in the current coalition landscape.</div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-label">Tier 3 — No Meaningful Alignment</div>
+          <div class="tier-desc">Your views aren't represented by any current party. Your named ideology, plus what a party for you would require.</div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-label">Tier 4 — Constitutional Ideal</div>
+          <div class="tier-desc">Your position mirrors the constitutional compromise — and the gap between that mandate and what parties actually deliver.</div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-label">Tier 5 — Hyper-Local Fit</div>
+          <div class="tier-desc">Your best match is a civic/local interest block. National parties have failed you; your vote may matter most at ward level.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-sub-h">Limitations — Stated Openly</div>
+      <p class="modal-p">Party positions shift. Manifestos are aspirational, not operational. Our scoring reflects stated positions, not governance outcomes. Smaller parties may have less profiling depth, but we aim for equal rigour across all 100+.</p>
+    </div>
+    <div class="modal-disclaimer">VERITAS is advisory and experimental. It cannot decode your vote for you. Your vote belongs to you — not to this instrument. Sources for every party position are linked from each party dossier.</div>
+    <button class="btn-return" onclick="closeModal()">← Return to VERITAS</button>
+  </div>
+</div>
+
+<!-- ACCESSIBILITY PANEL -->
+<div id="access-panel" class="access-panel" role="complementary" aria-label="Accessibility settings">
+  <div class="access-panel-title">Accessibility</div>
+  <div class="access-row">
+    <span class="access-label">Color Mode</span>
+    <div class="access-btns">
+      <button class="access-btn active" onclick="setMode('default',this)">Default</button>
+      <button class="access-btn" onclick="setMode('colorblind',this)">Colorblind</button>
+      <button class="access-btn" onclick="setMode('mono',this)">Mono</button>
+      <button class="access-btn" onclick="setMode('highcontrast',this)">High Contrast</button>
+    </div>
+  </div>
+  <div class="access-row">
+    <span class="access-label">Font Size</span>
+    <div class="access-btns">
+      <button class="access-btn active" onclick="setFont('standard',this)">Standard</button>
+      <button class="access-btn" onclick="setFont('large',this)">Large</button>
+      <button class="access-btn" onclick="setFont('dyslexia',this)">Dyslexia</button>
+    </div>
+  </div>
+  <div class="access-row">
+    <span class="access-label">Motion</span>
+    <div class="access-btns">
+      <button class="access-btn" id="motion-btn" onclick="toggleMotion()">Reduce Motion</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="site-header" role="banner">
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="assets/images/southa.jpg" alt="South African flag" class="header-flag" aria-hidden="true" />
+      <a href="#" class="header-wordmark" aria-label="VERITAS — return to top">VERITAS</a>
+    </div>
+    <span class="header-tagline">Advisory · Transparent · Yours</span>
+    <nav class="header-nav" aria-label="Site tools">
+      <select class="lang-select" aria-label="Select language" onchange="setLanguage(this.value)">
+        <option value="en">EN</option>
+        <option value="zu">ZU</option>
+        <option value="xh">XH</option>
+        <option value="af">AF</option>
+      </select>
+      <button class="btn-methodology" onclick="openModal()" aria-expanded="false" aria-controls="methodology-modal">
+        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <circle cx="5" cy="5" r="4"/><line x1="5" y1="3" x2="5" y2="5.5"/><circle cx="5" cy="7.5" r="0.4" fill="currentColor"/>
+        </svg>
+        Methodology
+      </button>
+      <button class="btn-access" onclick="toggleAccessPanel()" aria-label="Accessibility settings" aria-expanded="false" aria-controls="access-panel">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+          <circle cx="7" cy="3" r="1.5"/><line x1="7" y1="5" x2="7" y2="9.5"/><line x1="4" y1="6.5" x2="10" y2="6.5"/><line x1="5.5" y1="9.5" x2="4" y2="13"/><line x1="8.5" y1="9.5" x2="10" y2="13"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main-content">
+
+  <!-- HISTORY BANNER (hidden until 10+ assessments) -->
+  <div id="history-banner" class="history-banner" style="display:none;">
+    You've completed 10+ assessments. <button onclick="openHistoryModal()">View Your Multi‑Assessment Summary</button>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero" aria-label="VERITAS introduction">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/images/southa.jpg" aria-hidden="true">
+      <source src="assets/videos/hero-intro.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow" aria-hidden="true">South Africa &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Civic Instrument</div>
+      <h1 class="hero-title">VERITAS</h1>
+      <div class="hero-rule" aria-hidden="true"></div>
+      <p class="hero-tagline">
+        From the Latin <em>veritas</em> — truth. A faithful rendering of fact.<br />
+        Not an opinion. An instrument of clarity.
+      </p>
+      <p class="hero-sub">Where you stand. What is true.</p>
+      <div class="mode-grid" role="group" aria-label="Choose survey mode">
+        <button class="mode-btn mode-quick" onclick="startVERITAS('quick')">
+          <span class="mode-btn-label">Quick Profile</span>
+          <span class="mode-btn-meta">≈ 5 min · 20 questions · Directional</span>
+        </button>
+        <button class="mode-btn mode-standard" onclick="startVERITAS('standard')">
+          <span class="recommended-badge">★ Recommended</span>
+          <span class="mode-btn-label">Standard Profile</span>
+          <span class="mode-btn-meta">≈ 12 min · 45 questions · Reliable</span>
+        </button>
+        <button class="mode-btn mode-deep" onclick="startVERITAS('deep')">
+          <span class="mode-btn-label">Deep Profile</span>
+          <span class="mode-btn-meta">≈ 25 min · 80+ questions · Precise</span>
+        </button>
+      </div>
+      <div class="hero-notice">
+        <p>You may pause and resume at any time. No data leaves this device.</p>
+        <p>Experimental · Advisory only · Not a voting directive · POPIA compliant</p>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Explore the instrument</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- PARTY STRIP — expanded to 40 parties from your taxonomy -->
+  <div class="party-strip" aria-hidden="true">
+    <div class="party-strip-inner">
+      <!-- High-Impact Hegemons -->
+      <span class="party-chip">ANC</span><span class="party-dot">·</span>
+      <span class="party-chip">DA</span><span class="party-dot">·</span>
+      <span class="party-chip">MK</span><span class="party-dot">·</span>
+      <span class="party-chip">EFF</span><span class="party-dot">·</span>
+      <span class="party-chip">IFP</span><span class="party-dot">·</span>
+      <!-- Coalition Brokers -->
+      <span class="party-chip">PA</span><span class="party-dot">·</span>
+      <span class="party-chip">ActionSA</span><span class="party-dot">·</span>
+      <span class="party-chip">FF+</span><span class="party-dot">·</span>
+      <span class="party-chip">RISE</span><span class="party-dot">·</span>
+      <span class="party-chip">BOSA</span><span class="party-dot">·</span>
+      <span class="party-chip">UDM</span><span class="party-dot">·</span>
+      <span class="party-chip">Al Jama-ah</span><span class="party-dot">·</span>
+      <span class="party-chip">ACDP</span><span class="party-dot">·</span>
+      <span class="party-chip">ATM</span><span class="party-dot">·</span>
+      <span class="party-chip">GOOD</span><span class="party-dot">·</span>
+      <span class="party-chip">PAC</span><span class="party-dot">·</span>
+      <span class="party-chip">NCC</span><span class="party-dot">·</span>
+      <span class="party-chip">NFP</span><span class="party-dot">·</span>
+      <span class="party-chip">UAT</span><span class="party-dot">·</span>
+      <span class="party-chip">SACP</span><span class="party-dot">·</span>
+      <!-- Local & Civic -->
+      <span class="party-chip">F4SD</span><span class="party-dot">·</span>
+      <span class="party-chip">ABC</span><span class="party-dot">·</span>
+      <span class="party-chip">MAP16</span><span class="party-dot">·</span>
+      <span class="party-chip">AIC</span><span class="party-dot">·</span>
+      <span class="party-chip">COPE</span><span class="party-dot">·</span>
+      <span class="party-chip">ICOSA</span><span class="party-dot">·</span>
+      <span class="party-chip">APC</span><span class="party-dot">·</span>
+      <span class="party-chip">UIM</span><span class="party-dot">·</span>
+      <span class="party-chip">PBI</span><span class="party-dot">·</span>
+      <span class="party-chip">CAPEXIT</span><span class="party-dot">·</span>
+      <span class="party-chip">AZAPO</span><span class="party-dot">·</span>
+      <span class="party-chip">DLC</span><span class="party-dot">·</span>
+      <span class="party-chip">MF</span><span class="party-dot">·</span>
+      <span class="party-chip">IRC</span><span class="party-dot">·</span>
+      <span class="party-chip">BPSA</span><span class="party-dot">·</span>
+      <span class="party-chip">TSSA</span><span class="party-dot">·</span>
+      <span class="party-chip">ADeC</span><span class="party-dot">·</span>
+      <span class="party-chip">BRA</span><span class="party-dot">·</span>
+      <span class="party-chip">PAU</span><span class="party-dot">·</span>
+      <span class="party-chip">AASD</span>
+    </div>
+  </div>
+
+  <!-- § 01 MANDATE -->
+  <section class="content-section" id="mandate" aria-labelledby="mandate-h">
+    <div class="section-number">§ 01</div>
+    <h2 class="section-heading" id="mandate-h">Mandate</h2>
+    <hr class="rule section-rule" />
+    <div class="section-body">
+      <p><em>A truth engine for the citizen. We map personal conviction onto parliamentary reality — across over 100 registered parties, not just the loudest six.</em></p>
+      <p>VERITAS operates as a transparent bridge between the voter and the manifesto. By distilling complex legislative positions into a precise multi-axis policy matrix, we enable South Africans to see beyond partisan rhetoric and into the mechanical heart of governance.</p>
+      <p>Every data point is anchored in recorded parliamentary votes, official policy papers, published manifestos, and constitutional mandates. Our party profiles are grouped by systemic influence, capital tier, operational agent, ideological neutrality, governance effectiveness, and strategic positioning — dimensions that pure policy matching misses.</p>
+      <p>VERITAS does not tell you how to vote. It shows you where you stand — and then gives you the evidence to decide what to do with that information.</p>
+    </div>
+  </section>
+
+  <!-- § 02 CONTEXT -->
+  <section class="content-section" id="context" aria-labelledby="context-h" style="padding-top:0">
+    <div class="section-number">§ 02</div>
+    <h2 class="section-heading" id="context-h">Why This Exists</h2>
+    <hr class="rule section-rule" />
+    <div class="section-body">
+      <p>South Africa's democratic participation faces a crisis not of apathy alone, but of information. Voters choose parties based on historical loyalty, personality, ethnicity, and inherited allegiance — not policy alignment. The result is a Parliament that frequently does not reflect the actual policy preferences of the people who elect it.</p>
+      <p>The "popular personality" problem is real. Leaders become brands. Parties become tribes. Manifestos go unread. Policy debate is replaced by spectacle.</p>
+      <p>VERITAS is built on a single premise: an informed voter is a more sovereign voter. When you know where you stand on land reform, the NHI, foreign policy, and constitutional governance — and which of the 100+ parties actually match that stance — your vote becomes a deliberate act rather than a habitual one.</p>
+      <p><strong>This does not mean your historical loyalties are wrong. It means you can examine them.</strong></p>
+    </div>
+  </section>
+
+  <!-- § 03 PROCEDURE -->
+  <section class="content-section" id="procedure" aria-labelledby="procedure-h" style="padding-top:0">
+    <div class="section-number">§ 03</div>
+    <h2 class="section-heading" id="procedure-h">Procedure</h2>
+    <hr class="rule section-rule" />
+    <div class="steps">
+      <div class="step">
+        <div class="step-number" aria-hidden="true">01</div>
+        <div>
+          <div class="step-title">Articulate Your Stance</div>
+          <div class="step-body">
+            Respond to policy prompts drawn from current parliamentary debate — land, NHI, BEE, energy, immigration, foreign policy, governance, and more. Each question includes a neutral context brief. No prior political knowledge required. Choose your depth:
+            <ul>
+              <li><strong>Quick (20 questions)</strong> — A directional first read. Not a verdict.</li>
+              <li><strong>Standard (45 questions)</strong> — The recommended mode. Reliable for most users.</li>
+              <li><strong>Deep Profile (80+ questions)</strong> — The most accurate version. Compass placement and ideology identification are significantly more precise.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number" aria-hidden="true">02</div>
+        <div>
+          <div class="step-title">Synthesize Your Ideology</div>
+          <div class="step-body">
+            Our engine maps your responses onto three compasses simultaneously:
+            <ul>
+              <li><strong>The SA Compass</strong> — Transformation ↔ Stability / State Authority ↔ Constitutional Liberalism. Built specifically for South Africa's political reality.</li>
+              <li><strong>The Global Compass</strong> — Classic economic left/right × authoritarian/libertarian. Situates you against international political movements.</li>
+              <li><strong>The Full Ideological Map</strong> — From Stalinism to Anarcho-Capitalism. Identifies your nearest named ideology and explains it honestly, including its flaws and historical record.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number" aria-hidden="true">03</div>
+        <div>
+          <div class="step-title">Align Your Representation</div>
+          <div class="step-body">Discover which of the 100+ registered parties mirror your policy stance — with transparent per-axis match percentages and full party dossiers covering history, ideology, leadership background, parliamentary record, scandals, weaknesses, delivery track record, and coalition compatibility. We do not flatten the picture. The uncomfortable facts are included.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 04 EDITORIAL PLEDGE -->
+  <section class="pledge-section" id="pledge" aria-labelledby="pledge-h">
+    <div class="pledge-inner">
+      <div class="section-number" style="color:rgba(197,160,89,0.55);text-align:center;margin-bottom:1rem">§ 04</div>
+      <h2 class="section-heading" id="pledge-h" style="color:var(--gold);text-align:center;margin-bottom:1.5rem">Editorial Pledge</h2>
+      <hr class="rule" style="margin-bottom:3rem" />
+      <blockquote class="pledge-quote">
+        "This instrument is advisory.<br />
+        Your vote is a sacred article of democratic participation.<br />
+        Let no algorithm decode it for you."
+      </blockquote>
+      <div class="pledge-attribution">— VERITAS Charter, Clause 1</div>
+      <div class="pledge-items">
+        <div class="pledge-item">
+          <div class="pledge-item-title">We do not collect your data.</div>
+          <p class="pledge-item-body">Your responses never leave your device. No server receives your answers. No profile is built. No analytics track your political position. This is a constitutional instrument, not a data product. POPIA compliant by design — there is nothing to protect because nothing is collected.</p>
+        </div>
+        <div class="pledge-item">
+          <div class="pledge-item-title">We do not endorse any party.</div>
+          <p class="pledge-item-body">Every party profile — from the ANC to the smallest civic movement — is written to the same critical standard. Successes and failures documented with equal rigour. Sources cited. Where our characterisation may be disputed, we say so explicitly and link to the primary source.</p>
+        </div>
+        <div class="pledge-item">
+          <div class="pledge-item-title">We do not replace the manifesto.</div>
+          <p class="pledge-item-body">VERITAS synthesizes public record. It is a starting point, not a conclusion. We link directly to every party's official manifesto from their dossier page. Read them before you vote.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 05 SAMPLE PREVIEW -->
+  <section class="preview-section" id="preview" aria-label="Sample result preview">
+    <div class="preview-inner">
+      <div class="section-number">§ 05</div>
+      <h2 class="section-heading" style="margin-bottom:.4rem">What You Will Receive</h2>
+      <p style="font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;color:var(--ink-light);margin-bottom:2rem">A sample result — blurred until yours is earned.</p>
+      <div class="preview-card">
+        <div class="preview-blur">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+            <div>
+              <div style="font-family:var(--font-mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Political Compass</div>
+              <div class="fake-compass">
+                <div class="fake-axis-h"></div>
+                <div class="fake-axis-v"></div>
+                <div class="fake-dot"></div>
+              </div>
+              <div style="font-family:var(--font-display);font-size:.9rem;font-style:italic;color:var(--navy);text-align:center;margin-top:.5rem">Ubuntu Social Democrat</div>
+              <div style="font-family:var(--font-mono);font-size:.58rem;color:var(--ink-faint);text-align:center;letter-spacing:.1em;margin-top:.2rem">Centre-Left · Constitutional Liberal</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Party Alignment</div>
+              <div class="fake-bars">
+                <div class="fake-bar-row"><div class="fake-bar-label">RISE</div><div class="fake-bar-track"><div class="fake-bar-fill" style="width:82%"></div></div><div class="fake-bar-pct">82%</div></div>
+                <div class="fake-bar-row"><div class="fake-bar-label">BOSA</div><div class="fake-bar-track"><div class="fake-bar-fill" style="width:76%"></div></div><div class="fake-bar-pct">76%</div></div>
+                <div class="fake-bar-row"><div class="fake-bar-label">DA</div><div class="fake-bar-track"><div class="fake-bar-fill" style="width:68%"></div></div><div class="fake-bar-pct">68%</div></div>
+                <div class="fake-bar-row"><div class="fake-bar-label">ANC</div><div class="fake-bar-track"><div class="fake-bar-fill" style="width:55%"></div></div><div class="fake-bar-pct">55%</div></div>
+                <div class="fake-bar-row"><div class="fake-bar-label">EFF</div><div class="fake-bar-track"><div class="fake-bar-fill" style="width:31%"></div></div><div class="fake-bar-pct">31%</div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Coalition teaser -->
+          <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--gold-border);font-family:var(--font-mono);font-size:.58rem;letter-spacing:.15em;color:var(--ink-light);text-align:center">
+            COALITION COMPATIBILITY · RISE + BOSA + DA = STABLE MAJORITY POSSIBLE
+          </div>
+        </div>
+        <div class="preview-overlay">
+          <button class="mode-btn mode-standard" onclick="startVERITAS('standard')" style="max-width:240px">
+            <span class="mode-btn-label">Begin to reveal yours</span>
+            <span class="mode-btn-meta">Standard Profile · ≈ 12 minutes</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 06 ABOUT -->
+  <section class="content-section" id="about" aria-labelledby="about-h">
+    <div class="section-number">§ 06</div>
+    <h2 class="section-heading" id="about-h">About This Project</h2>
+    <hr class="rule section-rule" />
+    <div class="section-body">
+      <p><strong>VERITAS</strong> is an independent civic technology project. Built in South Africa, for South Africa. Not affiliated with any political party, government department, or electoral body. Receives no funding from any political organisation.</p>
+      <p>Built by <strong>VNA-07</strong> — Computer Science, Statistics, Mathematics — Rhodes University, Makhanda, 2026. Forked from VOTA, now extended to cover 100+ parties with multi-dimensional strategic analysis.</p>
+    </div>
+    <div class="data-grid" role="list" aria-label="Data sources">
+      <div class="data-cell" role="listitem"><div class="data-cell-label">Electoral Data</div><div class="data-cell-value">Electoral Commission of South Africa (IEC) — results 1994–2024</div></div>
+      <div class="data-cell" role="listitem"><div class="data-cell-label">Parliamentary Record</div><div class="data-cell-value">Parliamentary Monitoring Group (PMG) — voting records & committee reports</div></div>
+      <div class="data-cell" role="listitem"><div class="data-cell-label">State Capture</div><div class="data-cell-value">Zondo Commission Final Report (2022) — 5,000 pages of testimony and findings</div></div>
+      <div class="data-cell" role="listitem"><div class="data-cell-label">Party Manifestos</div><div class="data-cell-value">Individual party manifestos — 2024 general election, plus supplementary local government declarations</div></div>
+      <div class="data-cell" role="listitem"><div class="data-cell-label">Constitutional Basis</div><div class="data-cell-value">Constitution of the Republic of South Africa, Act 108 of 1996</div></div>
+      <div class="data-cell" role="listitem"><div class="data-cell-label">Additional Sources</div><div class="data-cell-value">SA Law Reform Commission reports · Stats SA · IEC official results · Local ward data</div></div>
+    </div>
+    <div class="contact-line">
+      <p>If you believe a party position has been mischaracterised or a question is misleading: <button id="email-reveal-btn" onclick="revealEmail()" aria-label="Show contact email">Show contact email</button>. We will review and correct with full transparency.</p>
+    </div>
+  </section>
+
+  <!-- CHARTER -->
+  <section class="charter-section" id="charter" aria-labelledby="charter-h">
+    <div class="charter-inner">
+      <div class="charter-preamble">Preamble — Adopted 2026</div>
+      <h2 class="charter-heading" id="charter-h">VERITAS Charter</h2>
+      <hr class="rule" style="margin-bottom:2.5rem" />
+      <div class="charter-body">
+        <p>We the builders of this instrument acknowledge:</p>
+        <ul class="charter-list">
+          <li>That South Africa's democracy is thirty years old and under strain.</li>
+          <li>That the vote is the most powerful instrument an ordinary citizen possesses.</li>
+          <li>That information asymmetry between the governed and the governing is itself a form of disenfranchisement.</li>
+          <li>That no algorithm, no compass, no quiz can tell a South African how to exercise their constitutional right.</li>
+          <li>That this tool exists only to illuminate — never to direct.</li>
+          <li>That we may be wrong, and that we remain open to correction.</li>
+        </ul>
+        <p>VERITAS is advisory. Experimental. Imperfect. It is offered in the spirit of Section 19 of the Constitution:</p>
+        <blockquote class="charter-constitution">
+          "Every adult citizen has the right to vote in elections for any legislative body established in terms of this Constitution, and to do so in secret; and every adult citizen has the right to stand for public office and, if elected, to hold office."
+          <cite>— Section 19, Constitution of the Republic of South Africa, 1996</cite>
+        </blockquote>
+        <p class="charter-final">That right belongs to you. Not to this instrument. Use it accordingly.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER with gold particle field -->
+<footer class="site-footer" role="contentinfo">
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <div class="footer-overlay">
+    <div class="footer-code" aria-label="VNA-07">VNA-07</div>
+    <div class="footer-name">Ayolela Vena &nbsp;·&nbsp; 2026</div>
+    <nav class="footer-links" aria-label="Footer links">
+      <a href="#mandate" class="footer-link">Mandate</a>
+      <a href="#procedure" class="footer-link">Procedure</a>
+      <a href="#" onclick="openModal();return false;" class="footer-link">Methodology</a>
+      <a href="#charter" class="footer-link">Charter</a>
+      <a href="#about" class="footer-link">About</a>
+      <a href="https://github.com/vna-07" target="_blank" rel="noopener noreferrer" class="footer-link">github.com/vna-07</a>
+    </nav>
+    <p class="footer-copy">© 2026 VERITAS Civic Tech &nbsp;·&nbsp; Built under Section 19 &nbsp;·&nbsp; Advisory &nbsp;·&nbsp; Not a directive</p>
+  </div>
+</footer>
+
+<!-- MUSIC PLAYER -->
+<div id="music-player" role="region" aria-label="Background music">
+  <div class="player-track" id="player-track">Asimbonanga</div>
+  <div class="player-artist" id="player-artist">Johnny Clegg & Savuka</div>
+  <div class="player-controls">
+    <button class="player-btn" onclick="prevTrack()" aria-label="Previous">⏮</button>
+    <button class="player-btn play" id="play-btn" onclick="togglePlay()" aria-label="Play">▶</button>
+    <button class="player-btn" onclick="nextTrack()" aria-label="Next">⏭</button>
+    <input type="range" class="player-volume" min="0" max="1" step="0.05" value="0.35" oninput="setVolume(this.value)" aria-label="Volume" />
+    <button class="player-mute" id="mute-btn" onclick="toggleMute()" aria-label="Mute">🔊</button>
+  </div>
+</div>
+
+<!-- LOADING placeholder (will be dynamically shown) -->
+<div id="veritas-loading" style="display:none">
+  <div class="loading-title">VERITAS</div>
+  <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+  <div class="loading-text">Initialising · STANDARD PROFILE</div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div id="history-modal" class="history-modal-overlay">
+    <div class="history-modal-card">
+        <button class="history-close-btn" onclick="closeHistoryModal()">✕</button>
+        <h2 style="font-family:var(--font-display);font-size:1.8rem;margin-bottom:1rem;">Your Political Journey</h2>
+        <div id="history-content"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── MODAL ──
+function openModal(){document.getElementById('methodology-modal').classList.add('open');document.body.style.overflow='hidden';document.querySelector('.modal-close').focus()}
+function closeModal(){document.getElementById('methodology-modal').classList.remove('open');document.body.style.overflow='';document.querySelector('.btn-methodology').focus()}
+document.getElementById('methodology-modal').addEventListener('click',function(e){if(e.target===this)closeModal()})
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()})
+
+// ── ACCESSIBILITY ──
+function toggleAccessPanel(){const p=document.getElementById('access-panel');const btn=document.querySelector('.btn-access');const open=p.classList.toggle('open');btn.setAttribute('aria-expanded',open)}
+function setMode(mode,el){document.documentElement.setAttribute('data-color-mode',mode==='default'?'':mode);document.querySelectorAll('.access-btn').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setMode'))b.classList.remove('active')});el.classList.add('active')}
+function setFont(size,el){document.documentElement.setAttribute('data-font-size',size==='standard'?'':size);document.querySelectorAll('.access-btn').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setFont'))b.classList.remove('active')});el.classList.add('active')}
+function toggleMotion(){const cur=document.documentElement.getAttribute('data-reduce-motion')==='true';document.documentElement.setAttribute('data-reduce-motion',!cur);document.getElementById('motion-btn').classList.toggle('active',!cur)}
+function setLanguage(l){console.log('Lang switch:',l)}
+
+// ── EMAIL ──
+function revealEmail(){const btn=document.getElementById('email-reveal-btn');const e='avianrossi@gmail.com';btn.outerHTML='<a href="mailto:'+e+'" style="color:var(--gold)">'+e+'</a>'}
+
+// ── MUSIC PLAYER (your playlist) ──
+const playlist = [
+  {
+    title: 'Asimbonanga',
+    artist: 'Johnny Clegg & Savuka',
+    src: 'assets/audio/' + encodeURI("Asimbonanga (Mandela) - Johnny Clegg & Savuka [UJujyzA2Q1E].mp3")
+  },
+  {
+    title: 'Redemption Song',
+    artist: 'Bob Marley & The Wailers',
+    src: 'assets/audio/' + encodeURI("Bob Marley & The Wailers - Redemption Song (Official Music Video) [yv5xonFSC4c].mp3")
+  },
+  {
+    title: 'Fortunate Son',
+    artist: 'Creedence Clearwater Revival',
+    src: 'assets/audio/' + encodeURI("Creedence Clearwater Revival - Fortunate Son [ZWijx_AgPiA].mp3")
+  },
+  {
+    title: 'Pumped Up Kicks',
+    artist: 'Foster The People',
+    src: 'assets/audio/' + encodeURI("Foster The People - Pumped Up Kicks (Official Video) [SDTZ7iX4vTQ].mp3")
+  },
+  {
+    title: 'Bring Back Nelson Mandela',
+    artist: 'Hugh Masekela',
+    src: 'assets/audio/' + encodeURI("Hugh Masekela Bring Back Nelson Mandela [opUElVlG1BQ].mp3")
+  },
+  {
+    title: 'Strange Fruit',
+    artist: 'Nina Simone',
+    src: 'assets/audio/' + encodeURI("Nina Simone - Strange Fruit [BnuEMdUUrZQ].mp3")
+  },
+  {
+    title: 'Sunday Bloody Sunday',
+    artist: 'U2',
+    src: 'assets/audio/' + encodeURI("Sunday Bloody Sunday [Iqlzoz_jH3c].mp3")
+  },
+  {
+    title: 'Zombie',
+    artist: 'The Cranberries',
+    src: 'assets/audio/' + encodeURI("The Cranberries - Zombie (Official Music Video) [6Ejga4kJuts].mp3")
+  }
+];
+let cur=0,playing=false,muted=false;
+const aud=new Audio();aud.volume=0.35;aud.preload='none';
+function loadTrack(i){aud.src=playlist[i].src;document.getElementById('player-track').textContent=playlist[i].title;document.getElementById('player-artist').textContent=playlist[i].artist}
+function togglePlay(){if(playing){aud.pause();document.getElementById('play-btn').textContent='▶';document.getElementById('play-btn').setAttribute('aria-label','Play');playing=false}else{if(!aud.src)loadTrack(cur);aud.play().catch(()=>{});document.getElementById('play-btn').textContent='⏸';document.getElementById('play-btn').setAttribute('aria-label','Pause');playing=true}}
+function prevTrack(){cur=(cur-1+playlist.length)%playlist.length;loadTrack(cur);if(playing)aud.play().catch(()=>{})}
+function nextTrack(){cur=(cur+1)%playlist.length;loadTrack(cur);if(playing)aud.play().catch(()=>{})}
+function setVolume(v){aud.volume=parseFloat(v);if(muted&&parseFloat(v)>0){muted=false;aud.muted=false;document.getElementById('mute-btn').textContent='🔊'}}
+function toggleMute(){muted=!muted;aud.muted=muted;document.getElementById('mute-btn').textContent=muted?'🔇':'🔊'}
+aud.addEventListener('ended',nextTrack);
+loadTrack(0);
+
+// ── START VERITAS ──
+window.startVERITAS=function(mode){
+  const loader=document.getElementById('veritas-loading');
+  loader.style.display='flex';
+  loader.querySelector('.loading-text').textContent='Initialising · '+(mode.toUpperCase())+' PROFILE';
+  // Re-trigger animation
+  const bar=loader.querySelector('.loading-bar-fill');
+  bar.style.animation='none';
+  bar.offsetHeight; // force reflow
+  bar.style.animation='loadFill 1.6s ease forwards';
+  setTimeout(function(){
+    window.location.href='survey.html?mode='+mode;
+  },1800);
+};
+
+// ── MULTI-RETAKE HISTORY ──
+function checkHistory() {
+    const history = JSON.parse(localStorage.getItem('veritas_history') || '[]');
+    if (history.length >= 10) {
+        document.getElementById('history-banner').style.display = 'block';
+    }
+}
+function openHistoryModal() {
+    const modal = document.getElementById('history-modal');
+    const content = document.getElementById('history-content');
+    const history = JSON.parse(localStorage.getItem('veritas_history') || '[]');
+    let avgRedress = 0, avgInst = 0, avgEcoL = 0, avgEcoR = 0, avgAuth = 0, avgLib = 0;
+    const partyCounts = {};
+    history.forEach(h => {
+        avgRedress += h.redress;
+        avgInst += h.institutional;
+        avgEcoL += h.economicLeft;
+        avgEcoR += h.economicRight;
+        avgAuth += h.authoritarian;
+        avgLib += h.libertarian;
+        partyCounts[h.topMatch] = (partyCounts[h.topMatch] || 0) + 1;
+    });
+    const n = history.length;
+    avgRedress /= n; avgInst /= n; avgEcoL /= n; avgEcoR /= n; avgAuth /= n; avgLib /= n;
+    const sortedParties = Object.entries(partyCounts).sort((a,b) => b[1]-a[1]);
+    let html = `<p style="font-family:'Space Mono',monospace;font-size:0.8rem;color:var(--slate);">${n} assessments analysed.</p>`;
+    html += `<h3 style="font-family:'Playfair Display',serif;margin-top:1rem;">Your Average Profile</h3>`;
+    html += `<p>Average Redress Alignment: <strong>${Math.round(avgRedress)}%</strong> | Institutional Protection: <strong>${Math.round(avgInst)}%</strong></p>`;
+    html += `<p>Economic Left-Right: <strong>${(avgEcoR-avgEcoL).toFixed(2)}</strong> (negative = left) | Authoritarian-Libertarian: <strong>${(avgAuth-avgLib).toFixed(2)}</strong></p>`;
+    html += `<h3 style="font-family:'Playfair Display',serif;margin-top:1rem;">Most Frequent Top Match</h3><ol>`;
+    sortedParties.forEach(([party, count]) => {
+        html += `<li>${party}: ${count} times (${Math.round(count/n*100)}%)</li>`;
+    });
+    html += `</ol>`;
+    html += `<p style="margin-top:1rem;font-size:0.8rem;color:var(--slate);">Note: This summary reflects your evolving political self. Trends may indicate changing views or deeper consistency.</p>`;
+    content.innerHTML = html;
+    modal.classList.add('open');
+}
+function closeHistoryModal() { document.getElementById('history-modal').classList.remove('open'); }
+checkHistory();
+
+// ── THREE.JS FOOTER (gold particles) ──
+(function(){
+  if(window.innerWidth<768)return;
+  const footer=document.querySelector('.site-footer');
+  const canvas=document.getElementById('particle-canvas');
+  if(!footer||!canvas||typeof THREE==='undefined')return;
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(55,footer.clientWidth/footer.clientHeight,1,1000);
+  camera.position.set(0,50,160);camera.lookAt(0,0,0);
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setSize(footer.clientWidth,footer.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const count=1200;const geo=new THREE.BufferGeometry();const pos=new Float32Array(count*3);
+  let idx=0;
+  for(let x=0;x<40;x++){for(let z=0;z<30;z++){pos[idx]=(x-20)*7;pos[idx+1]=0;pos[idx+2]=(z-15)*7;idx+=3}}
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const mat=new THREE.PointsMaterial({color:0xC5A059,size:1.4,transparent:true,opacity:0.38,blending:THREE.AdditiveBlending,depthWrite:false});
+  const particles=new THREE.Points(geo,mat);scene.add(particles);
+  const clock=new THREE.Clock();let rafId;
+  function animate(){
+    rafId=requestAnimationFrame(animate);const t=clock.getElapsedTime();
+    const arr=geo.attributes.position.array;let i=0;
+    for(let x=0;x<40;x++){for(let z=0;z<30;z++){arr[i+1]=Math.sin(x*0.15+t*0.7)*8+Math.cos(z*0.2+t*0.45)*6;i+=3}}
+    geo.attributes.position.needsUpdate=true;particles.rotation.y=t*0.035;renderer.render(scene,camera);
+  }
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){clock.start();animate()}else{cancelAnimationFrame(rafId)}})});
+  obs.observe(footer);
+  window.addEventListener('resize',()=>{const w=footer.clientWidth,h=footer.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)});
+})();
+</script>
+</body>
+</html>

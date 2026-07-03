@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABSA Payment Terminal | EPOS 1846</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --absa-red: #D5001C;
+            --absa-red-hover: #B00016;
+            --absa-red-light: rgba(213, 0, 28, 0.06);
+            --bg: #F2F4F7;
+            --card-bg: #FFFFFF;
+            --surface: #F8F9FB;
+            --border: #E2E5EA;
+            --text: #1A1D23;
+            --text-secondary: #5F636E;
+            --text-muted: #8A8F9A;
+            --green: #0F9D58;
+            --green-bg: rgba(15, 157, 88, 0.08);
+            --green-glow: rgba(15, 157, 88, 0.3);
+            --amber: #F9A825;
+            --amber-bg: rgba(249, 168, 37, 0.08);
+            --white: #FFFFFF;
+            --radius: 18px;
+            --radius-sm: 12px;
+            --radius-xs: 8px;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
+            --shadow-modal: 0 30px 70px rgba(0, 0, 0, 0.18), 0 6px 20px rgba(0, 0, 0, 0.06);
+            --transition: 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image:
+                radial-gradient(ellipse at 25% 25%, rgba(213, 0, 28, 0.02) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 60%, rgba(15, 157, 88, 0.02) 0%, transparent 55%),
+                radial-gradient(ellipse at 40% 85%, rgba(0, 0, 0, 0.01) 0%, transparent 50%);
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* ABSA CORPORATE TERMINAL CARD */
+        .terminal-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            padding: 32px 28px 28px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .terminal-card:hover {
+            box-shadow: 0 16px 38px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        /* ABSA red accent top bar */
+        .terminal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #D5001C 0%, #E5324A 50%, #D5001C 100%);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .absa-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .absa-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--absa-red);
+            border-radius: var(--radius-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 14px rgba(213, 0, 28, 0.25);
+        }
+
+        .absa-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .absa-name {
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.2px;
+            color: #1A1D23;
+            line-height: 1.1;
+        }
+        .absa-sub {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--green);
+            background: var(--green-bg);
+            padding: 7px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.2px;
+            border: 1px solid rgba(15, 157, 88, 0.15);
+        }
+        .terminal-status .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--green-glow);
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.7); opacity: 0.7; }
+        }
+
+        /* Information Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .info-item {
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        .info-item:hover {
+            background: #F1F3F6;
+        }
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+        .info-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .info-value {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+        .info-value.highlight {
+            color: #D5001C;
+            font-weight: 700;
+        }
+        .info-value.store {
+            color: #1A1D23;
+            font-weight: 600;
+        }
+        .info-value.device-warn {
+            color: var(--amber);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .warn-icon {
+            font-size: 15px;
+            line-height: 1;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 20px 0;
+            opacity: 0.8;
+        }
+
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .amount-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .amount-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A1D23;
+            letter-spacing: -1px;
+        }
+        .amount-value .currency {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-right: 3px;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: var(--radius-xs);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.2px;
+            transition: all var(--transition);
+            font-family: var(--font-sans);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: var(--absa-red);
+            color: white;
+            box-shadow: 0 6px 16px rgba(213, 0, 28, 0.3);
+        }
+        .btn-primary:hover {
+            background: var(--absa-red-hover);
+            box-shadow: 0 12px 24px rgba(213, 0, 28, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+            box-shadow: 0 4px 12px rgba(213, 0, 28, 0.25);
+        }
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text);
+            border: 1px solid var(--border);
+            font-weight: 500;
+        }
+        .btn-secondary:hover {
+            background: #F2F4F7;
+            border-color: #C4C9D1;
+        }
+
+        /* Confirmation Overlay (Popup) */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 16, 20, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 460px;
+            max-width: 94vw;
+            padding: 0;
+            box-shadow: var(--shadow-modal);
+            transform: translateY(25px) scale(0.95);
+            transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-top-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #D5001C, #C4001A, #D5001C);
+        }
+
+        .modal-body {
+            padding: 34px 30px 28px;
+            text-align: center;
+        }
+
+        /* Green Checkmark (kept as requested) */
+        .checkmark-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .checkmark-circle {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: var(--green-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 2px solid rgba(15, 157, 88, 0.2);
+            animation: pop-in 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards,
+                       glow-green 2.4s ease-in-out 0.5s infinite;
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0.2); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes glow-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(15, 157, 88, 0.45); }
+            50% { box-shadow: 0 0 0 24px rgba(15, 157, 88, 0); }
+        }
+        .checkmark-icon {
+            width: 46px;
+            height: 46px;
+        }
+        .checkmark-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        .check-path {
+            stroke: #0F9D58;
+            stroke-width: 3.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            stroke-dasharray: 65;
+            stroke-dashoffset: 65;
+            animation: draw-check 0.45s ease 0.35s forwards;
+        }
+        @keyframes draw-check {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            color: #1A1D23;
+        }
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 22px;
+            font-weight: 400;
+        }
+
+        .modal-details {
+            background: #F8F9FB;
+            border-radius: var(--radius-sm);
+            padding: 18px 20px;
+            text-align: left;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+        .modal-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .modal-detail-row:last-child {
+            border-bottom: none;
+        }
+        .modal-detail-label {
+            color: var(--text-muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            font-weight: 600;
+        }
+        .modal-detail-value {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+            letter-spacing: -0.2px;
+        }
+        .modal-detail-value.green {
+            color: var(--green);
+        }
+        .modal-detail-value.amber {
+            color: var(--amber);
+        }
+        .badge-confirmed {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--green-bg);
+            color: #0F9D58;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            border: 1px solid rgba(15, 157, 88, 0.2);
+        }
+        .badge-warning {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--amber-bg);
+            color: var(--amber);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            border: 1px solid rgba(249, 168, 37, 0.25);
+        }
+
+        .modal-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px 20px;
+            border-radius: var(--radius-xs);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            letter-spacing: 0.3px;
+            transition: all var(--transition);
+            font-family: var(--font-sans);
+        }
+        .modal-btn:hover {
+            background: #F2F4F7;
+            border-color: #C4C9D1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 22px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 16px 36px rgba(0,0,0,0.09);
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast .toast-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0F9D58;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .terminal-card {
+                padding: 24px 18px 20px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .btn-row {
+                flex-direction: column;
+            }
+            .amount-value {
+                font-size: 24px;
+            }
+            .modal {
+                width: 96vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- ABSA Terminal Card -->
+        <div class="terminal-card" id="mainTerminal">
+            <div class="terminal-header">
+                <div class="absa-brand">
+                    <div class="absa-logo">ABSA</div>
+                    <div class="absa-text">
+                        <span class="absa-name">ABSA</span>
+                        <span class="absa-sub">Payment Terminal</span>
+                    </div>
+                </div>
+                <div class="terminal-status">
+                    <span class="dot"></span> Active
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Transaction ID</div>
+                    <div class="info-value highlight">EPOS 1846</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Merchant</div>
+                    <div class="info-value store">Checkers Sixty</div>
+                </div>
+                <div class="info-item full-width">
+                    <div class="info-label">Device Information</div>
+                    <div class="info-value device-warn">
+                        <span class="warn-icon">⚠️</span> Unknown Device — Gauteng, Vaal
+                    </div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="amount-row">
+                <span class="amount-label">Transaction Amount</span>
+                <span class="amount-value"><span class="currency">ZAR</span> 1,846.00</span>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" id="btnCancel">Cancel</button>
+                <button class="btn btn-primary" id="btnConfirm">
+                    <span>✓</span> Confirm Transaction
+                </button>
+            </div>
+        </div>
+
+        <p style="color: var(--text-muted); font-size: 12px; letter-spacing: 0.3px; text-align: center; margin-top: 4px;">
+            ABSA Secure Payment Processing · <span style="font-weight:600;">EPOS 1846</span>
+        </p>
+    </div>
+
+    <!-- Confirmation Modal (popup window) -->
+    <div class="overlay" id="confirmationOverlay">
+        <div class="modal" id="confirmationModal">
+            <div class="modal-top-bar"></div>
+            <div class="modal-body">
+                <!-- Green checkmark -->
+                <div class="checkmark-wrapper">
+                    <div class="checkmark-circle">
+                        <div class="checkmark-icon">
+                            <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                                <path class="check-path" d="M14 27 l8 8 l16 -16" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-title">Transaction Confirmed</div>
+                <div class="modal-subtitle">EPOS 1846 · Processed by ABSA</div>
+
+                <div class="modal-details">
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Transaction ID</span>
+                        <span class="modal-detail-value green">EPOS 1846</span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Merchant</span>
+                        <span class="modal-detail-value">Checkers Sixty</span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Amount</span>
+                        <span class="modal-detail-value">ZAR 1,846.00</span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Device Location</span>
+                        <span class="modal-detail-value amber">Gauteng, Vaal</span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Device Status</span>
+                        <span class="modal-detail-value amber">⚠️ Unknown Device</span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Confirmation</span>
+                        <span><span class="badge-confirmed">✔ Green Check — Confirmed</span></span>
+                    </div>
+                    <div class="modal-detail-row">
+                        <span class="modal-detail-label">Timestamp</span>
+                        <span class="modal-detail-value" id="modalTimestamp">—</span>
+                    </div>
+                </div>
+
+                <button class="modal-btn" id="btnCloseModal">Close & Return to Terminal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-dot"></span> Confirmation window opened
+    </div>
+
+    <script>
+        (function() {
+            const btnConfirm = document.getElementById('btnConfirm');
+            const btnCancel = document.getElementById('btnCancel');
+            const btnCloseModal = document.getElementById('btnCloseModal');
+            const overlay = document.getElementById('confirmationOverlay');
+            const modalTimestamp = document.getElementById('modalTimestamp');
+            const toast = document.getElementById('toast');
+            let toastTimer = null;
+
+            function showToast(message) {
+                if (toastTimer) clearTimeout(toastTimer);
+                toast.innerHTML = '<span class="toast-dot"></span> ' + message;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 2300);
+            }
+
+            function getTimestamp() {
+                const now = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} SAST`;
+            }
+
+            function openConfirmation() {
+                modalTimestamp.textContent = getTimestamp();
+                overlay.classList.add('active');
+                // Restart checkmark animation
+                const circle = document.querySelector('.checkmark-circle');
+                const path = document.querySelector('.check-path');
+                if (circle && path) {
+                    const newCircle = circle.cloneNode(true);
+                    circle.parentNode.replaceChild(newCircle, circle);
+                    const newPath = newCircle.querySelector('.check-path');
+                    newPath.style.animation = 'none';
+                    newPath.offsetHeight;
+                    newPath.style.animation = 'draw-check 0.45s ease 0.35s forwards';
+                    newCircle.style.animation = 'none';
+                    newCircle.offsetHeight;
+                    newCircle.style.animation = 'pop-in 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards, glow-green 2.4s ease-in-out 0.5s infinite';
+                }
+                showToast('ABSA confirmation — EPOS 1846');
+            }
+
+            function closeConfirmation() {
+                overlay.classList.remove('active');
+                showToast('Returned to terminal');
+            }
+
+            btnConfirm.addEventListener('click', () => {
+                btnConfirm.textContent = 'Processing…';
+                btnConfirm.disabled = true;
+                btnConfirm.style.opacity = '0.8';
+                setTimeout(() => {
+                    openConfirmation();
+                    btnConfirm.innerHTML = '<span>✓</span> Confirm Transaction';
+                    btnConfirm.disabled = false;
+                    btnConfirm.style.opacity = '1';
+                }, 380);
+            });
+
+            btnCancel.addEventListener('click', () => {
+                showToast('Transaction cancelled');
+            });
+
+            btnCloseModal.addEventListener('click', closeConfirmation);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeConfirmation();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                    closeConfirmation();
+                }
+                if (e.key === 'Enter' && document.activeElement === btnConfirm && !overlay.classList.contains('active')) {
+                    btnConfirm.click();
+                }
+            });
+
+            // Initial subtle branding toast
+            setTimeout(() => {
+                showToast('ABSA Terminal · EPOS 1846');
+            }, 500);
+        })();
+    </script>
+</body>
+</html>

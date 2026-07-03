@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VERITAS Survey — Where do you stand on South African policy? Articulate your convictions." />
+  <title>VERITAS — Survey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1A1F2E; --parchment: #F0EBE1; --brass: #C9A84C; --brass-lt: #E8D48A;
+      --slate: #6B7280; --chalk: #FAFAF8; --rule: #D4C9B8; --red: #8B2020;
+      --green: #1A5C3A; --muted: #9CA3AF;
+      --font-display: 'Playfair Display', serif; --font-body: 'Inter', sans-serif; --font-mono: 'Space Mono', monospace;
+      --transition: 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px;scroll-behavior:smooth}
+    body{background:var(--parchment);color:var(--ink);font-family:var(--font-body);line-height:1.75;min-height:100vh;display:flex;flex-direction:column}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* ── Disclaimer Overlay ── */
+    #disclaimer-overlay{position:fixed;inset:0;z-index:999;background:rgba(26,31,46,0.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:2rem}
+    .disclaimer-card{background:var(--chalk);border:1px solid var(--rule);max-width:520px;width:100%;padding:2.5rem;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+    .disclaimer-icon{font-family:var(--font-display);font-size:3rem;color:var(--brass);margin-bottom:1rem}
+    .disclaimer-title{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:1rem}
+    .disclaimer-body{font-size:0.85rem;color:var(--slate);line-height:1.8;margin-bottom:1.5rem}
+    .disclaimer-body strong{color:var(--ink)}
+    .disclaimer-btn{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;background:var(--brass);color:var(--ink);border:none;padding:0.75rem 2rem;cursor:pointer;transition:all var(--transition)}
+    .disclaimer-btn:hover{background:var(--brass-lt);transform:translateY(-1px)}
+
+    /* ── Resume Overlay ── */
+    .resume-overlay{position:fixed;inset:0;z-index:998;background:rgba(26,31,46,0.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+    .resume-card{background:var(--chalk);border:1px solid var(--rule);max-width:420px;width:100%;padding:2.5rem;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.3)}
+    .resume-card h2{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem}
+    .resume-card p{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;color:var(--slate);margin-bottom:1.5rem}
+    .resume-buttons{display:flex;flex-direction:column;gap:0.75rem}
+    .resume-btn{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.75rem;border:1px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;transition:all var(--transition)}
+    .resume-btn:hover{background:rgba(201,168,76,0.1);border-color:var(--brass)}
+    .resume-btn.primary{background:var(--brass);border-color:var(--brass);color:var(--ink);font-weight:600}
+    .resume-btn.primary:hover{background:var(--brass-lt)}
+
+    /* ── Header ── */
+    #survey-header{position:sticky;top:0;z-index:50;background:rgba(240,235,225,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .header-left{display:flex;align-items:center;gap:0.75rem}
+    .header-flag{width:28px;height:18px;border-radius:2px;object-fit:cover;border:1px solid rgba(26,31,46,0.15)}
+    .header-wordmark{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:0.35em;color:var(--ink);text-decoration:none}
+    .header-mode{font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--slate)}
+    .header-right{display:flex;align-items:center;gap:1.5rem}
+    .progress-text{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.15em;color:var(--slate);text-transform:uppercase}
+    .progress-bar-track{flex:1;height:2px;background:var(--rule);margin:0 1rem}
+    .progress-bar-fill{height:100%;background:var(--brass);transition:width 0.3s ease}
+
+    /* ── Survey Container ── */
+    .survey-container{max-width:800px;width:100%;margin:0 auto;padding:3rem 2rem;flex:1;display:flex;flex-direction:column;gap:2rem}
+    .question-meta{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--brass)}
+    .question-text{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;line-height:1.3;color:var(--ink);margin-bottom:0.5rem}
+
+    /* Editor's Note */
+    .context-box{background:rgba(201,168,76,0.04);border-left:3px solid var(--brass);padding:1rem 1.25rem;margin:1rem 0;display:flex;flex-direction:column;gap:0.5rem}
+    .context-label{font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--brass);margin-bottom:0.2rem}
+    .context-text{font-size:0.9rem;color:var(--slate);line-height:1.6;transition:all 0.3s ease}
+    .context-toggle{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink);background:transparent;border:1px solid var(--rule);padding:0.2rem 0.75rem;cursor:pointer;align-self:flex-start;transition:all var(--transition)}
+    .context-toggle:hover{background:rgba(201,168,76,0.1);border-color:var(--brass)}
+
+    /* 5‑column selection */
+    .selection-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0.75rem;margin:1.5rem 0}
+    .selection-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 0.5rem;border:1px solid var(--rule);background:transparent;cursor:pointer;transition:all var(--transition);text-align:center;font-family:var(--font-mono);}
+    .selection-btn:hover{border-color:var(--brass);background:rgba(201,168,76,0.06)}
+    .selection-btn .symbol{font-size:1.8rem;color:var(--slate);margin-bottom:0.5rem;transition:transform 0.2s ease}
+    .selection-btn:hover .symbol{transform:scale(1.15)}
+    .selection-btn .label{font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--slate);font-weight:600}
+    .selection-btn.active{border-color:var(--brass);background:rgba(201,168,76,0.1);box-shadow:inset 0 0 0 1px var(--brass)}
+    .selection-btn.active .symbol{color:var(--ink)}
+    .selection-btn.active .label{color:var(--ink)}
+
+    /* Confidence slider */
+    .confidence-area{display:flex;align-items:center;gap:1rem;margin-top:0.5rem;font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.15em;color:var(--slate);text-transform:uppercase}
+    .confidence-slider{flex:1;appearance:none;height:2px;background:var(--rule);border-radius:2px;cursor:pointer;accent-color:var(--brass)}
+    .confidence-slider::-webkit-slider-thumb{appearance:none;width:10px;height:10px;background:var(--brass);border-radius:50%;cursor:pointer}
+
+    /* Navigation */
+    .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:2rem;border-top:1px solid var(--rule)}
+    .nav-btn{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;background:transparent;border:1px solid var(--rule);color:var(--ink);padding:0.5rem 1.25rem;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:0.5rem}
+    .nav-btn:hover{background:rgba(201,168,76,0.1);border-color:var(--brass)}
+    .nav-btn:disabled{opacity:0.3;pointer-events:none}
+
+    .submit-area{text-align:center;margin-top:2rem}
+    .submit-btn{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:0.15em;background:var(--brass);color:var(--ink);border:none;padding:1rem 3rem;cursor:pointer;transition:all var(--transition);text-transform:uppercase;box-shadow:0 0 0 1px var(--brass),0 8px 24px rgba(201,168,76,0.25)}
+    .submit-btn:hover{background:var(--brass-lt);transform:translateY(-2px);box-shadow:0 0 0 1px var(--brass-lt),0 14px 32px rgba(201,168,76,0.35)}
+
+    /* Mini music player */
+    #mini-player{position:fixed;bottom:1rem;right:1rem;z-index:90;background:rgba(26,31,46,0.94);border:1px solid rgba(201,168,76,0.2);padding:0.5rem 0.75rem;display:flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:0.55rem;color:rgba(201,168,76,0.8)}
+    #mini-player button{background:none;border:none;color:rgba(201,168,76,0.7);cursor:pointer;font-size:0.7rem}
+    #mini-player button:hover{color:var(--brass)}
+
+    /* Glossary tooltip */
+    .gloss-term{border-bottom:1px dashed var(--brass);cursor:help;position:relative}
+    .gloss-term:hover::after{content:attr(data-gloss);position:absolute;left:0;bottom:1.4em;background:var(--ink);color:var(--chalk);font-family:var(--font-mono);font-size:0.65rem;padding:0.4rem 0.7rem;white-space:normal;max-width:260px;width:max-content;z-index:120;border:1px solid var(--brass);line-height:1.5;letter-spacing:0.03em;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,0.25)}
+
+    @media(max-width:600px){
+      .selection-grid{grid-template-columns:1fr}
+      .selection-btn{flex-direction:row;gap:1rem;padding:0.75rem}
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="sr-only">Skip to main content</a>
+
+  <!-- ── Disclaimer Overlay ── -->
+  <div id="disclaimer-overlay">
+    <div class="disclaimer-card">
+      <div class="disclaimer-icon">⚖</div>
+      <h2 class="disclaimer-title">Before You Begin</h2>
+      <div class="disclaimer-body">
+        <p><strong>This survey is not a directive.</strong> It is an experimental civic instrument that reflects your stated convictions — nothing more.</p>
+        <p style="margin-top:0.75rem">The questions are drawn from South African parliamentary debate, manifestos, and the Zondo Commission. They are designed to help you articulate your own political values, not to influence your vote.</p>
+        <p style="margin-top:0.75rem"><strong>Your data never leaves this device.</strong> No account is created. No profile is tracked. You may pause and resume at any time.</p>
+        <p style="margin-top:0.75rem">Your vote is your own. Let no algorithm decide it for you.</p>
+      </div>
+      <button class="disclaimer-btn" onclick="dismissDisclaimer()">I Understand — Begin Survey</button>
+    </div>
+  </div>
+
+  <!-- ── Resume Overlay (hidden by default) ── -->
+  <div id="resume-overlay" class="resume-overlay" style="display:none;">
+    <div class="resume-card">
+      <h2>You have a saved session</h2>
+      <p id="resume-info"></p>
+      <div class="resume-buttons">
+        <button class="resume-btn primary" onclick="resumeSession()">Resume where you left off</button>
+        <button class="resume-btn" onclick="startFresh()">Start over</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Header ── -->
+  <header id="survey-header">
+    <div class="header-left">
+      <img src="assets/images/southa.jpg" alt="South African flag" class="header-flag" />
+      <a href="index.html" class="header-wordmark">VERITAS</a>
+      <span class="header-mode" id="mode-display">STANDARD</span>
+    </div>
+    <div class="header-right">
+      <span class="progress-text"><span id="answered-count">0</span>/<span id="total-questions">0</span> ANSWERED</span>
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      <span class="progress-text" id="save-indicator">AUTOSAVED</span>
+    </div>
+  </header>
+
+  <!-- ── Main Survey Area ── -->
+  <main id="main-content" class="survey-container">
+    <div id="question-area">
+      <div class="question-meta" id="question-theme"></div>
+      <h1 class="question-text" id="question-title"></h1>
+      <div class="context-box" id="context-box">
+        <div class="context-label">Editor's Note</div>
+        <p class="context-text" id="context-short"></p>
+        <button class="context-toggle" id="context-toggle-btn" onclick="toggleContext()">What is this about?</button>
+      </div>
+      <div class="selection-grid" id="selection-grid"></div>
+      <div class="confidence-area">
+        <span>Confidence</span>
+        <input type="range" class="confidence-slider" id="confidence-slider" min="0.5" max="2" step="0.25" value="1" oninput="updateConfidence()" />
+        <span id="confidence-label">1.0×</span>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" id="prev-btn" onclick="prevQuestion()" disabled>&larr; Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="nextQuestion()">Skip &rarr;</button>
+    </div>
+    <div class="submit-area" id="submit-area" style="display:none">
+      <button class="submit-btn" onclick="finishSurvey()">See Your Results</button>
+    </div>
+  </main>
+
+  <!-- ── Mini Player ── -->
+  <div id="mini-player">
+    <span id="mini-track">Asimbonanga</span>
+    <button onclick="toggleMiniPlay()" id="mini-play-btn">▶</button>
+    <button onclick="nextMiniTrack()">⏭</button>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/glossary.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/parties.js"></script>
+  <script>
+    // ── Disclaimer persistence ──
+    if (localStorage.getItem('veritas_survey_disclaimer_accepted') === 'true') {
+      document.getElementById('disclaimer-overlay').style.display = 'none';
+    }
+    window.dismissDisclaimer = function() {
+      localStorage.setItem('veritas_survey_disclaimer_accepted', 'true');
+      document.getElementById('disclaimer-overlay').style.display = 'none';
+    };
+
+    // ── State ──
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode') || 'standard';
+    document.getElementById('mode-display').textContent = mode.toUpperCase() + ' PROFILE';
+
+    const fullBank = window.VERITAS_QUESTIONS || [];
+
+    // Mode baselines (per theme)
+    const MODE_BASELINES = {
+      quick: {
+        'Land & Property': 1, 'Economy & Markets': 1, 'Social & Rights': 1,
+        'Security & Justice': 1, 'Education & Health': 1, 'Foreign Policy': 1,
+        'Governance': 1, 'Environment': 1, 'SA Historical Events': 2,
+        'Philosophy & Theory': 0, 'Race & Identity': 1, 'Youth & Culture': 0,
+        'Gender & Family': 1, 'Religion & Tradition': 1, 'Media & Technology': 0,
+        'Local Government': 1, 'Labour': 1, 'Crime & Rehabilitation': 1,
+        'Health & Autonomy': 1, 'Constitutional Law': 1
+      },
+      standard: {
+        'Land & Property': 2, 'Economy & Markets': 3, 'Social & Rights': 2,
+        'Security & Justice': 2, 'Education & Health': 2, 'Foreign Policy': 2,
+        'Governance': 3, 'Environment': 2, 'SA Historical Events': 4,
+        'Philosophy & Theory': 0, 'Race & Identity': 2, 'Youth & Culture': 1,
+        'Gender & Family': 2, 'Religion & Tradition': 2, 'Media & Technology': 1,
+        'Local Government': 2, 'Labour': 2, 'Crime & Rehabilitation': 2,
+        'Health & Autonomy': 2, 'Constitutional Law': 2
+      },
+      deep: {
+        'Land & Property': 4, 'Economy & Markets': 5, 'Social & Rights': 4,
+        'Security & Justice': 4, 'Education & Health': 4, 'Foreign Policy': 4,
+        'Governance': 5, 'Environment': 3, 'SA Historical Events': 8,
+        'Philosophy & Theory': 1, 'Race & Identity': 4, 'Youth & Culture': 3,
+        'Gender & Family': 3, 'Religion & Tradition': 3, 'Media & Technology': 3,
+        'Local Government': 4, 'Labour': 4, 'Crime & Rehabilitation': 4,
+        'Health & Autonomy': 4, 'Constitutional Law': 5
+      }
+    };
+    const TARGETS = { quick: 20, standard: 45, deep: 80 };
+
+    // ── Glossary highlighting (whole‑word, single‑pass) ──
+    function highlightGlossary(text) {
+      if (!text) return '';
+      const glossary = window.VERITAS_GLOSSARY || {};
+      const terms = Object.keys(glossary).sort((a, b) => b.length - a.length);
+      if (terms.length === 0) return text;
+
+      // Escape each term for regex, then combine with word boundaries
+      const escapedTerms = terms.map(term =>
+        term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+      );
+      const pattern = new RegExp(`\\b(${escapedTerms.join('|')})\\b`, 'gi');
+
+      return text.replace(pattern, (matched) => {
+        // Find the original glossary key (case‑insensitive)
+        const key = terms.find(k => k.toLowerCase() === matched.toLowerCase());
+        if (key) {
+          const gloss = glossary[key].replace(/"/g, '&quot;');
+          return `<span class="gloss-term" data-gloss="${gloss}">${matched}</span>`;
+        }
+        return matched;
+      });
+    }
+
+    // ── Question selection ──
+    function selectQuestionsForMode(mode) {
+      const baseline = MODE_BASELINES[mode] || MODE_BASELINES.standard;
+      const target = TARGETS[mode] || 45;
+      const selected = [];
+      const realQuestions = fullBank.filter(q => !q.text.startsWith('[PLACEHOLDER]'));
+      const questionsByTheme = {};
+      realQuestions.forEach(q => {
+        const theme = q.theme || 'General';
+        if (!questionsByTheme[theme]) questionsByTheme[theme] = [];
+        questionsByTheme[theme].push(q);
+      });
+      Object.keys(baseline).forEach(theme => {
+        const pool = questionsByTheme[theme] || [];
+        const count = Math.min(baseline[theme], pool.length);
+        if (count > 0) {
+          const shuffled = [...pool].sort(() => Math.random() - 0.5);
+          selected.push(...shuffled.slice(0, count));
+        }
+      });
+      if (selected.length < target) {
+        const remaining = realQuestions.filter(q => !selected.includes(q));
+        const shuffledRemaining = [...remaining].sort(() => Math.random() - 0.5);
+        selected.push(...shuffledRemaining.slice(0, target - selected.length));
+      }
+      return selected.sort(() => Math.random() - 0.5);
+    }
+
+    let questions = selectQuestionsForMode(mode);
+    let currentIndex = 0;
+    let answers = {};
+    let currentAnswer = null;
+    let currentConfidence = 1;
+    let autoAdvanceTimer = null;
+
+    // DOM elements
+    const questionTitle = document.getElementById('question-title');
+    const questionTheme = document.getElementById('question-theme');
+    const contextShort = document.getElementById('context-short');
+    const contextToggleBtn = document.getElementById('context-toggle-btn');
+    const selectionGrid = document.getElementById('selection-grid');
+    const confidenceSlider = document.getElementById('confidence-slider');
+    const confidenceLabel = document.getElementById('confidence-label');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitArea = document.getElementById('submit-area');
+    const answeredCount = document.getElementById('answered-count');
+    const totalQuestions = document.getElementById('total-questions');
+    const progressFill = document.getElementById('progress-fill');
+    const saveIndicator = document.getElementById('save-indicator');
+    const resumeOverlay = document.getElementById('resume-overlay');
+    const resumeInfo = document.getElementById('resume-info');
+
+    totalQuestions.textContent = questions.length;
+
+    // ── Context toggle ──
+    let contextExpanded = false;
+    window.toggleContext = function() {
+      const q = questions[currentIndex];
+      if (!q) return;
+      if (!contextExpanded) {
+        contextShort.innerHTML = highlightGlossary(q.contextLong || q.contextShort);
+        contextToggleBtn.textContent = '← Less Context';
+        contextExpanded = true;
+      } else {
+        contextShort.innerHTML = highlightGlossary(q.contextShort);
+        contextToggleBtn.textContent = 'What is this about?';
+        contextExpanded = false;
+      }
+    };
+
+    // ── Confidence ──
+    window.updateConfidence = function() {
+      currentConfidence = parseFloat(confidenceSlider.value);
+      confidenceLabel.textContent = currentConfidence.toFixed(2) + '×';
+      if (currentAnswer !== null) {
+        answers[questions[currentIndex].id] = { answer: currentAnswer, confidence: currentConfidence };
+        saveToStorage();
+      }
+    };
+
+    // ── Render question ──
+    function renderQuestion() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      const q = questions[currentIndex];
+      if (!q) return;
+
+      questionTitle.innerHTML = highlightGlossary(q.text);
+      questionTheme.textContent = (q.theme || 'GENERAL') + ' · WEIGHT ×' + (q.weight || 1).toFixed(1);
+      contextShort.innerHTML = highlightGlossary(q.contextShort);
+      contextToggleBtn.textContent = 'What is this about?';
+      contextExpanded = false;
+
+      const options = [
+        { value: -2, symbol: '——', label: 'STRONGLY DISAGREE' },
+        { value: -1, symbol: '—', label: 'DISAGREE' },
+        { value: 0, symbol: '○', label: 'NEUTRAL / UNSURE' },
+        { value: 1, symbol: '+', label: 'AGREE' },
+        { value: 2, symbol: '++', label: 'STRONGLY AGREE' },
+      ];
+      selectionGrid.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'selection-btn';
+        btn.innerHTML = `<span class="symbol">${opt.symbol}</span><span class="label">${opt.label}</span>`;
+        btn.onclick = () => selectOption(opt.value, btn);
+        if (answers[q.id] && answers[q.id].answer === opt.value) {
+          btn.classList.add('active');
+        }
+        selectionGrid.appendChild(btn);
+      });
+
+      if (answers[q.id]) {
+        currentAnswer = answers[q.id].answer;
+        currentConfidence = answers[q.id].confidence;
+        confidenceSlider.value = currentConfidence;
+        confidenceLabel.textContent = currentConfidence.toFixed(2) + '×';
+      } else {
+        currentAnswer = null;
+        currentConfidence = 1;
+        confidenceSlider.value = 1;
+        confidenceLabel.textContent = '1.00×';
+      }
+
+      updateNavButtons();
+      updateProgress();
+    }
+
+    function selectOption(value, btnElement) {
+      currentAnswer = value;
+      const q = questions[currentIndex];
+      answers[q.id] = { answer: value, confidence: currentConfidence };
+      saveToStorage();
+      document.querySelectorAll('.selection-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      updateProgress();
+      if (currentIndex < questions.length - 1) {
+        if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = setTimeout(() => {
+          currentIndex++;
+          renderQuestion();
+          autoAdvanceTimer = null;
+        }, 400);
+      } else {
+        updateNavButtons();
+      }
+    }
+
+    function updateNavButtons() {
+      prevBtn.disabled = currentIndex === 0;
+      if (currentIndex === questions.length - 1) {
+        nextBtn.style.display = 'none';
+        submitArea.style.display = 'block';
+      } else {
+        nextBtn.style.display = 'block';
+        submitArea.style.display = 'none';
+      }
+    }
+
+    function updateProgress() {
+      const answered = Object.keys(answers).length;
+      answeredCount.textContent = answered;
+      const pct = (answered / questions.length) * 100;
+      progressFill.style.width = pct + '%';
+    }
+
+    function skipQuestion() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        updateNavButtons();
+      }
+      autoAdvanceTimer = null;
+    }
+
+    function prevQuestion() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+      autoAdvanceTimer = null;
+    }
+
+    window.nextQuestion = skipQuestion;
+    window.prevQuestion = prevQuestion;
+
+    // ── Storage ──
+    function saveToStorage() {
+      localStorage.setItem('veritas_answers', JSON.stringify(answers));
+      localStorage.setItem('veritas_mode', mode);
+      localStorage.setItem('veritas_current_index', currentIndex);
+      saveIndicator.textContent = 'AUTOSAVED';
+      setTimeout(() => { if (saveIndicator.textContent === 'AUTOSAVED') saveIndicator.textContent = ''; }, 1500);
+    }
+
+    function loadFromStorage() {
+      const saved = localStorage.getItem('veritas_answers');
+      if (saved) {
+        answers = JSON.parse(saved);
+        const savedIndex = localStorage.getItem('veritas_current_index');
+        if (savedIndex !== null) {
+          currentIndex = parseInt(savedIndex, 10);
+          if (isNaN(currentIndex) || currentIndex < 0 || currentIndex >= questions.length) currentIndex = 0;
+        }
+        const q = questions[currentIndex];
+        if (q && answers[q.id]) {
+          currentAnswer = answers[q.id].answer;
+          currentConfidence = answers[q.id].confidence;
+        }
+      }
+    }
+
+    // ── Resume / Fresh logic ──
+    function checkForSavedSession() {
+      const savedAnswers = localStorage.getItem('veritas_answers');
+      if (savedAnswers) {
+        const parsed = JSON.parse(savedAnswers);
+        const num = Object.keys(parsed).length;
+        if (num > 0) {
+          resumeInfo.textContent = `You have ${num} answered question${num>1?'s':''} from a previous session.`;
+          resumeOverlay.style.display = 'flex';
+          return true;
+        }
+      }
+      return false;
+    }
+
+    window.resumeSession = function() {
+      resumeOverlay.style.display = 'none';
+      loadFromStorage();
+      renderQuestion();
+    };
+
+    window.startFresh = function() {
+      localStorage.removeItem('veritas_answers');
+      localStorage.removeItem('veritas_mode');
+      localStorage.removeItem('veritas_current_index');
+      answers = {};
+      currentIndex = 0;
+      currentAnswer = null;
+      currentConfidence = 1;
+      resumeOverlay.style.display = 'none';
+      renderQuestion();
+    };
+
+    // ── Finish ──
+    window.finishSurvey = function() {
+      const axis = VERITAS_ENGINE.calculateAxes(answers, window.VERITAS_QUESTIONS);
+      localStorage.setItem('veritas_results', JSON.stringify(axis));
+
+      // History tracking
+      const history = JSON.parse(localStorage.getItem('veritas_history') || '[]');
+      const parties = window.VERITAS_PARTIES || [];
+      const matches = parties.length ? VERITAS_ENGINE.matchParties(axis, parties) : [];
+      const top = matches[0] || {};
+      history.push({
+        date: new Date().toISOString(),
+        mode: mode,
+        answersCount: Object.keys(answers).length,
+        topMatch: top.name || 'N/A',
+        topMatchPct: top.match || 0,
+        ideology: VERITAS_ENGINE.evaluateIdeology(axis.economicLeft, axis.economicRight, axis.authoritarian, axis.libertarian).title,
+        redress: VERITAS_ENGINE.computeRedressIndex(axis),
+        institutional: VERITAS_ENGINE.computeInstitutionalIndex(axis),
+        economicLeft: axis.economicLeft,
+        economicRight: axis.economicRight,
+        authoritarian: axis.authoritarian,
+        libertarian: axis.libertarian,
+        transformation: axis.transformation,
+        stability: axis.stability,
+        stateAuthority: axis.stateAuthority,
+        constitutionalLiberalism: axis.constitutionalLiberalism
+      });
+      localStorage.setItem('veritas_history', JSON.stringify(history.slice(-50)));
+
+      window.location.href = 'results.html';
+    };
+
+    // ── Init ──
+    if (!checkForSavedSession()) {
+      loadFromStorage();
+      renderQuestion();
+    }
+
+    // ── Mini music player ──
+    const miniPlaylist = [
+      {title:'Asimbonanga',src:'assets/audio/'+encodeURI("Asimbonanga (Mandela) - Johnny Clegg & Savuka [UJujyzA2Q1E].mp3")},
+      {title:'Redemption Song',src:'assets/audio/'+encodeURI("Bob Marley & The Wailers - Redemption Song (Official Music Video) [yv5xonFSC4c].mp3")},
+      {title:'Fortunate Son',src:'assets/audio/'+encodeURI("Creedence Clearwater Revival - Fortunate Son [ZWijx_AgPiA].mp3")},
+      {title:'Pumped Up Kicks',src:'assets/audio/'+encodeURI("Foster The People - Pumped Up Kicks (Official Video) [SDTZ7iX4vTQ].mp3")},
+      {title:'Bring Back Nelson Mandela',src:'assets/audio/'+encodeURI("Hugh Masekela Bring Back Nelson Mandela [opUElVlG1BQ].mp3")},
+      {title:'Strange Fruit',src:'assets/audio/'+encodeURI("Nina Simone - Strange Fruit [BnuEMdUUrZQ].mp3")},
+      {title:'Sunday Bloody Sunday',src:'assets/audio/'+encodeURI("Sunday Bloody Sunday [Iqlzoz_jH3c].mp3")},
+      {title:'Zombie',src:'assets/audio/'+encodeURI("The Cranberries - Zombie (Official Music Video) [6Ejga4kJUts].mp3")}
+    ];
+    let miniCur = 0, miniPlaying = false;
+    const miniAudio = new Audio(); miniAudio.volume = 0.3;
+    function loadMiniTrack(i){ miniAudio.src = miniPlaylist[i].src; document.getElementById('mini-track').textContent = miniPlaylist[i].title; }
+    window.toggleMiniPlay = function(){
+      if(miniPlaying){ miniAudio.pause(); document.getElementById('mini-play-btn').textContent='▶'; miniPlaying=false; }
+      else{ if(!miniAudio.src) loadMiniTrack(miniCur); miniAudio.play().catch(()=>{}); document.getElementById('mini-play-btn').textContent='⏸'; miniPlaying=true; }
+    };
+    window.nextMiniTrack = function(){ miniCur = (miniCur+1)%miniPlaylist.length; loadMiniTrack(miniCur); if(miniPlaying) miniAudio.play().catch(()=>{}); };
+    miniAudio.addEventListener('ended', ()=>{ miniCur = (miniCur+1)%miniPlaylist.length; loadMiniTrack(miniCur); if(miniPlaying) miniAudio.play().catch(()=>{}); });
+    loadMiniTrack(0);
+  </script>
+</body>
+</html>
